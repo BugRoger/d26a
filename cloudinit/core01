@@ -62,7 +62,7 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=no
-        ExecStart=/usr/bin/wget -o /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
+        ExecStart=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
 
 write_files:
   - path: /etc/environment
