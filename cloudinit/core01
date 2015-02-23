@@ -58,13 +58,14 @@ coreos:
       runtime: true
       content: |
         [Unit]
-        Description=Fetch Updated User-Data
+        Description=Fetch Updated Userdata
         Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
+        Requires=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
 
         [Service]
         Type=oneshot
         RemainAfterExit=no
-        ExecStart=/bin/bash -c '/usr/bin/curl https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01 > /var/lib/coreos-install/user-data'
+        ExecStart=/bin/bash -c '/usr/bin/curl https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01 > /var/lib/coreos-install/user_data'
 
 write_files:
   - path: /etc/environment
