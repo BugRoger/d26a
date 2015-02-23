@@ -1,0 +1,14 @@
+[Unit]
+Requires=map-rbd@shared-data-admin.service
+After=map-rbd@shared-data-admin.service
+DefaultDependencies=no
+Conflicts=umount.target
+Before=remote-fs.target umount.target
+
+[Mount]
+What=/dev/rbd/shared/data
+Where=/mnt/data
+Type=xfs
+
+[X-Fleet]
+Global=true

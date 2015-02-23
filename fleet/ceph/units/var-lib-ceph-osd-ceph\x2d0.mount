@@ -1,0 +1,13 @@
+[Unit]
+Description=OSD-0 Data
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Mount]
+What=/dev/sda
+Where=/var/lib/ceph/osd/ceph-0
+Type=xfs
+
+[X-Fleet]
+MachineID=7e1cfed03b1a4b388e0c1797608eadb4
