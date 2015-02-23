@@ -58,7 +58,7 @@ coreos:
       runtime: true
       content: |
         [Unit]
-        Description=Fetch Updated Userdata
+        Description=Fetch Updated User-Data
         Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
 
         [Service]
