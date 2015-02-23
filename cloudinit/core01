@@ -54,6 +54,15 @@ coreos:
       command: start
     - name: fleet.service
       command: start
+    - name: oem-cloudinit.service
+      command: restart
+      runtime: yes
+      content: |
+        [Unit]
+        Description=Cloudinit from EC2-style metadata
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/coreos-cloudinit --from-url https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
 
 write_files:
   - path: /etc/environment
