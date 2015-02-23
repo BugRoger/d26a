@@ -54,7 +54,6 @@ coreos:
       command: start
     - name: fleet.service
       command: start
-    - name: oem-cloudinit.service
       command: start 
       runtime: yes
       content: |

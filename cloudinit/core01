@@ -54,15 +54,16 @@ coreos:
       command: start
     - name: fleet.service
       command: start
-    - name: oem-cloudinit.service
+    - name: update-user-data.service
       command: start 
-      runtime: yes
       content: |
         [Unit]
-        Description=Cloudinit from EC2-style metadata
+        Description=Fetch Updated Userdata
+        Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
+
         [Service]
         Type=oneshot
-        ExecStart=/usr/bin/coreos-cloudinit --from-url https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
+        ExecStart=/usr/bin/curl https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01 > /var/lib/coreos-install/user-data
 
 write_files:
   - path: /etc/environment
