@@ -53,12 +53,9 @@ coreos:
     - name: etcd.service
       command: start
     - name: update-user-data.service
-      runtime: true
       content: |
         [Unit]
         Description=Fetch Updated Userdata
-        Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
-        Requires=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
 
         [Service]
         Type=oneshot
