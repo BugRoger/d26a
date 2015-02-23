@@ -1,0 +1,98 @@
+#cloud-config
+
+hostname: core02
+
+ssh-authorized-keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvFapuevZeHFpFn438XMjvEQYd0wt7+tzUdAkMiSd007Tx1h79Xm9ZziDDUe4W6meinVOq93MAS/ER27hoVWGo2H/vn/Cz5M8xr2j5rQODnrF3RmfrJTbZAWaDN0JTq2lFjmCHhZJNhr+VQP1uw4z2ofMBP6MLybnLmm9ukzxFYZqCCyfEEUTCMA9SWywtTpGQp8VLM4INCxzBSCuyt3SO6PBvJSo4HoKg/sLvmRwpCVZth48PI0EUbJ72wp88Cw3bv8CLce2TOkLMwkE6NRN55w2aOyqP1G3vixHa6YcVaLlkQhJoJsBwE3rX5603y2KjOhMomqHfXxXn/3GKTWlsQ== michael.j.schmidt@gmail.com
+
+users:
+  - name: michi
+    groups:
+      - sudo
+      - docker
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvFapuevZeHFpFn438XMjvEQYd0wt7+tzUdAkMiSd007Tx1h79Xm9ZziDDUe4W6meinVOq93MAS/ER27hoVWGo2H/vn/Cz5M8xr2j5rQODnrF3RmfrJTbZAWaDN0JTq2lFjmCHhZJNhr+VQP1uw4z2ofMBP6MLybnLmm9ukzxFYZqCCyfEEUTCMA9SWywtTpGQp8VLM4INCxzBSCuyt3SO6PBvJSo4HoKg/sLvmRwpCVZth48PI0EUbJ72wp88Cw3bv8CLce2TOkLMwkE6NRN55w2aOyqP1G3vixHa6YcVaLlkQhJoJsBwE3rX5603y2KjOhMomqHfXxXn/3GKTWlsQ== michael.j.schmidt@gmail.com
+
+coreos:
+  etcd:
+    name: core02
+    discovery: https://discovery.etcd.io/0d55443b35c1d53f640d9172a1b00a08
+    addr: 192.168.2.3:4001
+    peer-addr: 192.168.2.3:7001
+  units:
+    - name: dhcp.network
+      command: restart
+      content: |
+        [Match]
+        Name=bond0
+
+        [Network]
+        DHCP=true
+    - name: ethernet1.network
+      command: restart
+      content: |
+        [Match]
+        Name=enp2s0
+
+        [Network]
+        Bond=bond0
+    - name: ethernet2.network
+      command: restart
+      content: |
+        [Match]
+        Name=enp3s0
+
+        [Network]
+        Bond=bond0
+    - name: virtual.netdev
+      command: restart
+      content: |
+        [NetDev]
+        Name=bond0
+        Kind=bond
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: oem-cloudinit.service
+      command: start 
+      runtime: yes
+      content: |
+        [Unit]
+        Description=Cloudinit from EC2-style metadata
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/coreos-cloudinit --from-url https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core02
+
+write_files:
+  - path: /etc/environment
+    permissions: 0644
+    content: |
+      COREOS_PUBLIC_IPV4=192.168.2.3
+      COREOS_PRIVATE_IPV4=192.168.2.3
+  - path: /etc/systemd/system/docker.service.d/limits.conf
+    permissions: 0644
+    content: |
+      [Service]
+      LimitNOFILE=4096
+  - path: /usr/share/oem/bin/ceph-rbdnamer
+    permissions: 0755
+    content: |
+      #!/bin/sh
+
+      DEV=$1
+      NUM=`echo $DEV | sed 's#p.*##g' | tr -d 'a-z'`
+      POOL=`cat /sys/devices/rbd/$NUM/pool`
+      IMAGE=`cat /sys/devices/rbd/$NUM/name`
+      SNAP=`cat /sys/devices/rbd/$NUM/current_snap`
+      if [ "$SNAP" = "-" ]; then
+        echo -n "$POOL $IMAGE"
+      else
+        echo -n "$POOL $IMAGE@$SNAP"
+      fi 
+  - path: /etc/udev/rules.d/50-rbd.rules
+    permission: 644
+    content: |
+      KERNEL=="rbd[0-9]*", ENV{DEVTYPE}=="disk", PROGRAM="/usr/share/oem/bin/ceph-rbdnamer %k", SYMLINK+="rbd/%c{1}/%c{2}"
+      KERNEL=="rbd[0-9]*", ENV{DEVTYPE}=="partition", PROGRAM="/usr/share/oem/bin/ceph-rbdnamer %k", SYMLINK+="rbd/%c{1}/%c{2}-part%n"
+

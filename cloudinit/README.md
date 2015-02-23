@@ -1,4 +1,5 @@
 # Update Cloudinit
 
 ```
-   curl 
+   systemctl restart oem-cloudinit
+```
