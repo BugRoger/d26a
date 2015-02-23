@@ -91,7 +91,7 @@ write_files:
         echo -n "$POOL $IMAGE@$SNAP"
       fi 
   - path: /etc/udev/rules.d/50-rbd.rules
-    permission: 644
+    permissions: 644
     content: |
       KERNEL=="rbd[0-9]*", ENV{DEVTYPE}=="disk", PROGRAM="/usr/share/oem/bin/ceph-rbdnamer %k", SYMLINK+="rbd/%c{1}/%c{2}"
       KERNEL=="rbd[0-9]*", ENV{DEVTYPE}=="partition", PROGRAM="/usr/share/oem/bin/ceph-rbdnamer %k", SYMLINK+="rbd/%c{1}/%c{2}-part%n"
