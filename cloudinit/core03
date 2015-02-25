@@ -52,6 +52,8 @@ coreos:
         Kind=bond
     - name: etcd.service
       command: start
+    - name: fleet.service
+      command: start
     - name: user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
       content: |
         [Unit]
