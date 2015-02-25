@@ -1,0 +1,19 @@
+[Unit]
+After=docker.service
+DefaultDependencies=no
+Conflicts=umount.target
+Before=remote-fs.target umount.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/etc/environment
+ExecStartPre=/bin/bash -c 'mkdir -p $(systemd-escape -u -p %i)'
+ExecStart=/bin/bash -c 'mount -t ceph ${COREOS_PRIVATE_IPV4}:6789:/ $(systemd-escape -u -p %i) -o name=admin,secret=$(docker run -v /etc/ceph:/etc/ceph -v /dev:/dev --net=host --privileged -t ceph/base ceph auth get-key client.admin)'
+ExecStop=/bin/bash -c 'umount $(systemd-escape -u -p %i)'
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
