@@ -54,6 +54,7 @@ coreos:
       command: start
     - name: update-user-data.service
       runtime: true
+      enable: true
       content: |
         [Unit]
         Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
