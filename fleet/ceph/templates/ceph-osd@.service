@@ -20,4 +20,4 @@ TimeoutStopSec=15
 WantedBy=multi-user.target
 
 [X-Fleet]
-MachineMetadata=osd-ceph-%i=true
+MachineMetadata=ceph-osd-%i=true

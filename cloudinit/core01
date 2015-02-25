@@ -58,6 +58,8 @@ coreos:
       enable: true
       content: |
         [Unit]
+        After=network-online.target
+        Wants=network-online.target
         Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
         Description=Fetch Updated Userdata
 
