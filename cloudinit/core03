@@ -52,22 +52,24 @@ coreos:
         Kind=bond
     - name: etcd.service
       command: start
-    - name: update-user-data.service
-      enable: true
+    - name: user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
       content: |
         [Unit]
+        After=coreos-setup-environment.service
+        Requires=coreos-setup-environment.service
         After=network-online.target
         Wants=network-online.target
-        Before=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
+        Before=user-config.target
+        ConditionFileNotEmpty=%f
         Description=Fetch Updated Userdata
 
         [Service]
         Type=oneshot
-        RemainAfterExit=no
-        ExecStart=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core03
+        RemainAfterExit=true
+        EnvironmentFile=-/etc/environment
+        ExecStartPre=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core03
+        ExecStart=/usr/bin/coreos-cloudinit --from-file=%f
 
-        [Install]
-        WantedBy=user-cloudinit@var-lib-coreos\x2dinstall-user_data.service
 
 write_files:
   - path: /etc/environment
