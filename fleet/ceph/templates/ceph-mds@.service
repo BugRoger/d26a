@@ -1,6 +1,7 @@
 [Unit]
 Description=Ceph Metadata Server
 After=docker.service
+After=ceph-mon.service
 
 [Service]
 TimeoutSec=0
