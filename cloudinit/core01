@@ -27,7 +27,7 @@ coreos:
         Name=bond0
 
         [Network]
-        DHCP=true
+        DHCP=both
     - name: ethernet1.network
       command: restart
       content: |
