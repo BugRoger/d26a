@@ -14,8 +14,10 @@ Prepare and mount the data drive:
 mkdir -p /var/lib/ceph/osd/ceph-{osd-id}
 lsblk
 mkfs -t xfs -f /dev/sda
+```
 
-vi /etc/systemd/system/var-lib-ceph-osd-ceph\\x2d0.mount
+Make a new unit: `var-lib-ceph-osd-ceph\\x2d{osd_id}.mount`
+```
 [Unit]
 Description=OSD-0 Data
 
@@ -28,24 +30,10 @@ systemctl daemon-reload
 systemctl start var-lib-ceph-osd-ceph\\x2d0.mount
 ```
 
-Configure Fleet:
+To avoid immediate recovery and rebalancing on shutdown an installation of a new osd: `ceph osd set noout`
+After restart of all osds: `ceph osd unset noout`
 
-```
-mkdir -p /etc/systemd/system/fleet.service.d
-vi /etc/systemd/system/fleet.service.d/20-osds.conf
-[Service]
-Environment='FLEET_METADATA=osd-ceph-0=true'
 
-systemctl daemon-reload
-systemctl restart fleet
-```
-
-Make a new unit and schedule it:
-
-```
-ln -s ../templates/ceph-osd@.service ceph-osd@0.service
-fleetctl start ceph-osd@0.service
-```
 
 # Cluster Health
 

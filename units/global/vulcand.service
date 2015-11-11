@@ -1,0 +1,23 @@
+[Unit]
+Description=Vulcand
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill vulcand
+ExecStartPre=-/usr/bin/docker rm vulcand
+ExecStart=\
+  /usr/bin/docker run -p 443:443 \
+                      -p 8182:8182 \
+                      -p 8181:8181 \
+                      --name vulcand \
+                      mailgun/vulcand:v0.8.0-alpha.3 \
+                      /go/bin/vulcand -apiInterface=0.0.0.0 \
+                                      --etcd=http://${COREOS_PRIVATE_IPV4}:4001 \
+                                      --sealKey=090874ac4da8bde70ad7f8cf3a427afd66d4acfb3796875728487340acd38e14
+ExecStop=/usr/bin/docker stop vulcand
+Restart=always
+
+[X-Fleet]
+Global=true

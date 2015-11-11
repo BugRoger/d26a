@@ -1,12 +1,12 @@
 [Unit]
-Description=OSD-2 Data
+Description=OSD-4 Data
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target ceph-osd.service 
 
 [Mount]
-What=/dev/sdb
-Where=/var/lib/ceph/osd/ceph-2
+What=/dev/sda
+Where=/var/lib/ceph/osd/ceph-4
 Type=xfs
 
 [Install]

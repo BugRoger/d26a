@@ -1,0 +1,28 @@
+[Unit]
+Description=sabnzb
+After=docker.service
+After=mount-ceph@mnt-data.service
+Requires=docker.service
+Requires=mount-ceph@mnt-data.service
+
+[Service]
+TimeoutStartSec=300
+ExecStartPre=/bin/mkdir -p /mnt/data/sapnzb/config
+ExecStartPre=/bin/mkdir -p /mnt/data/videos
+ExecStartPre=-/usr/bin/docker kill sabnzb 
+ExecStartPre=-/usr/bin/docker rm sabnzb
+ExecStart=\
+  /usr/bin/docker run -h ${COREOS_PRIVATE_IPV4} \
+                      -v /mnt/data/sapnzb/config:/config \
+                      -v /mnt/data/videos:/data \
+                      -p 8080:8080 \
+                      -p 9090:9090 \
+                      -e SERVICE_NAME=sabnzb \
+                      --name sabnzb timhaak/sabnzbd
+ExecStop=/usr/bin/docker stop sabnzb
+Restart=always
+
+[X-Fleet]
+Conflicts=sonarr.service
+Conflicts=plex.service
+
