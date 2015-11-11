@@ -20,7 +20,7 @@ coreos:
     addr: 192.168.2.2:4001
     peer-addr: 192.168.2.2:7001
   etcd2:
-    discovery: https://discovery.etcd.io/05521f68ad5a551f5612e4c1dec84ab3
+    discovery: https://discovery.etcd.io/01a4f9217ddcd5dc0e77b5f175d62916
     advertise-client-urls: http://$public_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379
