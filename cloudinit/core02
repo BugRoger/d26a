@@ -14,16 +14,11 @@ users:
       - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvFapuevZeHFpFn438XMjvEQYd0wt7+tzUdAkMiSd007Tx1h79Xm9ZziDDUe4W6meinVOq93MAS/ER27hoVWGo2H/vn/Cz5M8xr2j5rQODnrF3RmfrJTbZAWaDN0JTq2lFjmCHhZJNhr+VQP1uw4z2ofMBP6MLybnLmm9ukzxFYZqCCyfEEUTCMA9SWywtTpGQp8VLM4INCxzBSCuyt3SO6PBvJSo4HoKg/sLvmRwpCVZth48PI0EUbJ72wp88Cw3bv8CLce2TOkLMwkE6NRN55w2aOyqP1G3vixHa6YcVaLlkQhJoJsBwE3rX5603y2KjOhMomqHfXxXn/3GKTWlsQ== michael.j.schmidt@gmail.com
 
 coreos:
-  etcd:
-    name: core02
-    discovery: https://discovery.etcd.io/0d55443b35c1d53f640d9172a1b00a08
-    addr: 192.168.2.3:4001
-    peer-addr: 192.168.2.3:7001
   etcd2:
-    discovery: https://discovery.etcd.io/01a4f9217ddcd5dc0e77b5f175d62916
+    initial-cluster=core0=http://192.168.2.2,core1=http://192.168.2.3,core2=http://192.168.2.4
     advertise-client-urls: http://$public_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
-    listen-client-urls: http://0.0.0.0:2379
+    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://$private_ipv4:2380
   units:
     - name: dhcp.network
@@ -56,7 +51,7 @@ coreos:
         [NetDev]
         Name=bond0
         Kind=bond
-    - name: etcd.service
+    - name: etcd2.service
       command: start
     - name: fleet.service
       command: start
