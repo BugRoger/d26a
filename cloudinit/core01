@@ -92,6 +92,7 @@ coreos:
         [Path]
         PathModified=%f/.git/refs/heads/master
     - name: bootstrap@var-lib-d26a.service
+      content: |
         [Unit]
         After=bootstrap-update.service
         ConditionPathExists=%f/bootstrap.sh
