@@ -74,6 +74,7 @@ coreos:
         ExecStartPre=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
         ExecStart=/usr/bin/coreos-cloudinit --from-file=%f
     - name: bootstrap.service
+      command: "start"
       content: |
         [Unit]
         Requires=docker.service
@@ -84,22 +85,6 @@ coreos:
         RemainAfterExit=false
         ExecStart=/usr/bin/bash -c "[ -d /var/lib/d26a ] || git clone https://github.com/bugroger/d26a /var/lib/d26a"
         ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git pull origin master"
-    - name: var-lib-d26a.path
-      content: |
-        [Unit]
-        ConditionPathExists=/var/lib/d26a/.git/refs/heads/master
-
-        [Path]
-        PathModified=/var/lib/d26a/.git/refs/heads/master
-    - name: var-lib-d26a.service
-      content: |
-        [Unit]
-        After=bootstrap.service
-        ConditionPathExists=/var/lib/d26a/bootstrap.sh
-
-        [Service]
-        Type=oneshot
-        RemainAfterExit=false
         ExecStart=/var/lib/d26a/bootstrap.sh
 
 write_files:
