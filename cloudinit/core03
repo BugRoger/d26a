@@ -73,7 +73,19 @@ coreos:
         EnvironmentFile=-/etc/environment
         ExecStartPre=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core03
         ExecStart=/usr/bin/coreos-cloudinit --from-file=%f
+    - name: bootstrap.service
+      command: "start"
+      content: |
+        [Unit]
+        Requires=docker.service
+        After=docker.service
 
+        [Service]
+        Type=oneshot
+        RemainAfterExit=false
+        ExecStart=/usr/bin/bash -c "[ -d /var/lib/d26a ] || git clone https://github.com/bugroger/d26a /var/lib/d26a"
+        ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git pull origin master"
+        ExecStart=/var/lib/d26a/bootstrap.sh
 
 write_files:
   - path: /etc/environment
