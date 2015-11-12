@@ -102,9 +102,6 @@ coreos:
         RemainAfterExit=false
         ExecStart=/var/lib/d26a/bootstrap.sh
 
-
-
-
 write_files:
   - path: /etc/environment
     permissions: 0644
