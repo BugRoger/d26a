@@ -73,7 +73,7 @@ coreos:
         EnvironmentFile=-/etc/environment
         ExecStartPre=/usr/bin/wget -O /var/lib/coreos-install/user_data https://raw.githubusercontent.com/BugRoger/d26a/master/cloudinit/core01
         ExecStart=/usr/bin/coreos-cloudinit --from-file=%f
-    - name: bootstrap-update.service
+    - name: bootstrap.service
       content: |
         [Unit]
         Requires=docker.service
@@ -84,22 +84,23 @@ coreos:
         RemainAfterExit=false
         ExecStart=/usr/bin/bash -c "[ -d /var/lib/d26a ] || git clone https://github.com/bugroger/d26a /var/lib/d26a"
         ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git fetch"
-    - name: bootstrap@var-lib-d26a.path
+    - name: var-lib-d26a.path
       content: |
         [Unit]
-        ConditionPathExists=%f/.git/refs/heads/master
+        ConditionPathExists=/var/lib/d26a/.git/refs/heads/master
 
         [Path]
-        PathModified=%f/.git/refs/heads/master
-    - name: bootstrap@var-lib-d26a.service
+        PathModified=/var/lib/d26a/.git/refs/heads/master
+    - name: var-lib-d26a.service
       content: |
         [Unit]
-        After=bootstrap-update.service
-        ConditionPathExists=%f/bootstrap.sh
+        After=bootstrap.service
+        ConditionPathExists=/var/lib/d26a/bootstrap.sh
 
         [Service]
         Type=oneshot
-        ExecStart=%f/bootstrap.sh
+        RemainAfterExit=false
+        ExecStart=/var/lib/d26a/bootstrap.sh
 
 
 
