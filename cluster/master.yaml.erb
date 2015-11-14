@@ -1,0 +1,293 @@
+#cloud-config
+
+write_files:
+  - path: /opt/bin/waiter.sh
+    owner: root
+    content: |
+      #!/usr/bin/bash
+      until curl http://127.0.0.1:2379/v2/machines; do sleep 2; done
+
+  - path: /opt/bin/format_volume.sh
+    owner: root
+    content: |
+      #!/usr/bin/bash
+      until [ -e $1 ]; do sleep 1; done
+      blkid $1 || (wipefs -f $1; mkfs.ext4 $1)
+
+  - path: /etc/kubernetes/kubeconfig
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - name: local
+          cluster:
+             certificate-authority: /etc/kubernetes/ca.pem
+             server: "https://<%= ENV["KUBERNETES_MASTER"] %>:6443"
+      contexts:
+        - name: local 
+          context:
+            cluster: local
+            user: local 
+      current-context: local
+      users:
+        - name: local
+          user:
+            client-certificate: /etc/kubernetes/client.pem
+            client-key: /etc/kubernetes/client-key.pem
+
+coreos:
+  fleet:
+    etcd-servers: http://localhost:2379
+    metadata: "role=master"
+
+  units:
+    - name: monsoon-iptables.timer
+      mask: true 
+
+    - name: monsoon-iptables.service
+      mask: true
+
+    - name: format-volume@.service
+      content: |
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/format_volume.sh
+        ExecStart=/usr/bin/bash /opt/bin/format_volume.sh %f 
+
+    - name: var-lib-etcd2.mount
+      command: start
+      content: |
+        [Unit]
+        Requires=format-volume@dev-sdf.service
+        After=format-volume@dev-sdf.service
+        Before=etcd2.service
+        [Mount]
+        What=/dev/sdf
+        Where=/var/lib/etcd2
+        Type=ext4
+
+    - name: setup-network-environment.service
+      command: start
+      content: |
+        [Unit]
+        Description=Setup Network Environment
+        Documentation=https://github.com/kelseyhightower/setup-network-environment
+        Requires=network-online.target
+        After=network-online.target
+        [Service]
+        EnvironmentFile=/etc/environment
+        ExecStartPre=-/usr/bin/mkdir -p /opt/bin
+        ExecStartPre=/usr/bin/wget -P /opt/bin https://github.com/kelseyhightower/setup-network-environment/releases/download/v1.0.0/setup-network-environment
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/setup-network-environment
+        ExecStart=/opt/bin/setup-network-environment
+        RemainAfterExit=yes
+        Type=oneshot
+
+    - name: etcd2.service
+      command: start
+      content: |
+        [Unit]
+        Description=etcd
+        Requires=setup-network-environment.service
+        After=setup-network-environment.service
+        [Service]
+        EnvironmentFile=/etc/network-environment
+        User=etcd
+        PermissionsStartOnly=true
+        ExecStartPre=/usr/bin/bash -c "chown etcd:etcd /var/lib/etcd2"
+        ExecStart=/usr/bin/etcd2 \
+        --name ${DEFAULT_IPV4} \
+        --listen-client-urls http://0.0.0.0:2379 \
+        --data-dir /var/lib/etcd2 \
+        --advertise-client-urls http://${DEFAULT_IPV4}:2379 \
+        --listen-peer-urls http://${DEFAULT_IPV4}:2380
+
+    - name: fleet.service
+      command: start
+
+    - name: etcd-waiter.service
+      command: start
+      content: |
+        [Unit]
+        Description=etcd waiter
+        Wants=network-online.target
+        Wants=etcd2.service
+        After=etcd2.service
+        After=network-online.target
+        Before=flanneld.service
+        [Service]
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/waiter.sh
+        ExecStart=/usr/bin/bash /opt/bin/waiter.sh
+        RemainAfterExit=true
+        Type=oneshot
+
+    - name: flanneld.service
+      command: start
+      drop-ins:
+        - name: 50-network-config.conf
+          content: |
+            [Service]
+            ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"192.168.0.0/16", "Backend": {"Type": "vxlan"}}'
+            ExecStart=
+            ExecStart=/usr/libexec/sdnotify-proxy /run/flannel/sd.sock \
+                /usr/bin/docker run --net=host --privileged=true --rm \
+                    --volume=/run/flannel:/run/flannel \
+                    --env=NOTIFY_SOCKET=/run/flannel/sd.sock \
+                    --env-file=/run/flannel/options.env \
+                    --volume=${ETCD_SSL_DIR}:/etc/ssl/etcd:ro \
+                    quay.io/coreos/flannel:${FLANNEL_VER} /opt/bin/flanneld --ip-masq=true
+
+    - name: docker-cache.service
+      command: start
+      content: |
+        [Unit]
+        Description=Docker cache proxy
+        Requires=early-docker.service
+        After=early-docker.service
+        Before=early-docker.target
+        [Service]
+        Restart=always
+        TimeoutStartSec=0
+        RestartSec=5
+        Environment="TMPDIR=/var/tmp/"
+        Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
+        ExecStartPre=-/usr/bin/docker kill docker-registry
+        ExecStartPre=-/usr/bin/docker rm docker-registry
+        ExecStartPre=/usr/bin/docker pull quay.io/devops/docker-registry:latest
+        ExecStart=/usr/bin/docker run --rm --net host --name docker-registry \
+            -e STANDALONE=false \
+            -e GUNICORN_OPTS=[--preload] \
+            -e MIRROR_SOURCE=https://registry-1.docker.io \
+            -e MIRROR_SOURCE_INDEX=https://index.docker.io \
+            -e MIRROR_TAGS_CACHE_TTL=1800 \
+            quay.io/devops/docker-registry:latest
+
+    - name: docker.service
+      drop-ins:
+        - name: 51-docker-mirror.conf
+          content: |
+            [Unit]
+            # making sure that docker-cache is up and that flanneld finished
+            # startup, otherwise containers won't land in flannel's network...
+            Requires=docker-cache.service flanneld.service
+            After=docker-cache.service flanneld.service
+            [Service]
+            Environment=DOCKER_OPTS='--registry-mirror=http://$private_ipv4:5000'
+
+    - name: kubernetes-download@.service
+      content: |
+        [Service]
+        EnvironmentFile=/etc/environment
+        ExecStartPre=-/usr/bin/mkdir -p /opt/bin
+        ExecStart=/bin/bash -c "wget -N -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/v<%= ENV["KUBERNETES_VERSION"] %>/bin/linux/amd64/%i && chmod +x /opt/bin/%i"
+        Type=oneshot
+        RemainAfterExit=yes 
+
+    - name: kube-certs.service
+      command: start
+      content: |
+        [Unit]
+        Description=Generate Kubernetes API Server certificates
+        Requires=cfssl.service
+        After=cfssl.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=true
+        EnvironmentFile=/etc/environment
+        EnvironmentFile=/etc/network-environment
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes
+        ExecStartPre=/usr/bin/mkdir -p /opt/bin
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://github.wdf.sap.corp/monsoon/monsoon-kube/raw/master/scripts/make-certs
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/make-certs
+        ExecStart=/opt/bin/make-certs -r 127.0.0.1:8888 \
+            -t <%= ENV["KUBERNETES_CA_TOKEN"] %> \
+            -c ${DEFAULT_IPV4}@<%= ENV["KUBERNETES_PUBLIC_HOST"] %> \
+            -s <%= ENV["KUBERNETES_MASTER"] %> \
+            -s <%= ENV["KUBERNETES_PUBLIC_HOST"] %> \
+            -s *.<%= ENV["KUBERNETES_PUBLIC_HOST"] %> \
+            -s ${DEFAULT_IPV4} \
+            -s 172.16.0.1 \
+            -s kubernetes \
+            -s kubernetes.default \
+            -s kubernetes.default.svc \
+            -s kubernetes.default.svc.<%= ENV["KUBERNETES_DNS_DOMAIN"] %> 
+
+    - name: cfssl.service
+      command: start
+      content: |
+        [Unit]
+        Description=Certificate Authority Server
+        Requires=network-online.target
+        After=network-online.target
+
+        [Service]
+        EnvironmentFile=/etc/environment
+        ExecStartPre=/usr/bin/mkdir -p /opt/bin
+        ExecStartPre=/usr/bin/wget -N -P /opt/bin https://github.wdf.sap.corp/monsoon/monsoon-kube/raw/master/scripts/init-ca
+        ExecStartPre=/usr/bin/chmod +x /opt/bin/init-ca
+        ExecStartPre=/opt/bin/init-ca -t <%= ENV["KUBERNETES_CA_TOKEN"] %> -o <%= ENV["KUBERNETES_PUBLIC_HOST"] %>
+        ExecStart=/opt/bin/cfssl serve -ca /etc/kubernetes/ca.pem -ca-key=/etc/kubernetes/ca-key.pem -config /etc/kubernetes/cfssl.json -address 0.0.0.0 -port 8888 
+        Restart=always
+        RestartSec=10
+
+    - name: kube-apiserver.service
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes API Server
+        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Requires=etcd2.service kubernetes-download@kube-apiserver.service kube-certs.service
+        After=etcd2.service kubernetes-download@kube-apiserver.service kube-certs.service
+
+        [Service]
+        EnvironmentFile=/etc/network-environment
+        ExecStart=/opt/bin/kube-apiserver \
+        --bind-address=${DEFAULT_IPV4} \
+        --secure-port=6443 \
+        --client-ca-file=/etc/kubernetes/ca.pem \
+        --service-account-key-file=/etc/kubernetes/ca-key.pem \
+        --tls-private-key-file=/etc/kubernetes/server-key.pem \
+        --tls-cert-file=/etc/kubernetes/server.pem \
+        --kubelet-https=true \
+        --kubelet-certificate-authority=/etc/kubernetes/ca.pem \
+        --kubelet-client-certificate=/etc/kubernetes/client.pem \
+        --kubelet-client-key=/etc/kubernetes/client-key.pem \
+        --admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
+        --service-cluster-ip-range=172.16.0.0/16 \
+        --etcd_servers=http://127.0.0.1:2379 \
+        --logtostderr=true
+        Restart=always
+        RestartSec=10
+
+    - name: kube-controller-manager.service
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes Controller Manager
+        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Requires=kube-apiserver.service kubernetes-download@kube-controller-manager.service
+        After=kube-apiserver.service kubernetes-download@kube-controller-manager.service
+        [Service]
+        ExecStart=/opt/bin/kube-controller-manager \
+        --kubeconfig=/etc/kubernetes/kubeconfig \
+        --root-ca-file=/etc/kubernetes/ca.pem \
+        --service-account-private-key-file=/etc/kubernetes/ca-key.pem \
+        --logtostderr=true
+        Restart=always
+        RestartSec=10
+
+    - name: kube-scheduler.service
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes Scheduler
+        Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+        Requires=kube-apiserver.service kubernetes-download@kube-scheduler.service
+        After=kube-apiserver.service kubernetes-download@kube-scheduler.service
+        [Service]
+        ExecStart=/opt/bin/kube-scheduler --kubeconfig=/etc/kubernetes/kubeconfig
+        Restart=always
+        RestartSec=10
