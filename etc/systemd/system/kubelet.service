@@ -3,6 +3,7 @@ ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
 ExecStart=/opt/bin/kubelet \
   --address=0.0.0.0 \
   --port=10250 \
+  --hostname-override=%H \
   --tls-private-key-file=/etc/kubernetes/ssl/server-key.pem \
   --tls-cert-file=/etc/kubernetes/ssl/server.pem \
   --api-servers=https://127.0.0.1 \
