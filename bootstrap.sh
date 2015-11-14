@@ -36,7 +36,7 @@ function download_kubernetes {
 }
 
 function copy_configuration {
-    cp -R etc/ /etc/
+    cp -R etc /
 }
 
 function fix_permissions {
