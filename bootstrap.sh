@@ -39,6 +39,12 @@ function copy_configuration {
     cp -R etc/ /etc/
 }
 
+function fix_permissions {
+    /usr/sbin/groupadd -r -f kube-cert
+    chgrp kube-cert /etc/kubernetes/ssl/*.pem
+    chmod 660 /etc/kubernetes/ssl/*.pem
+}
+
 function setup_kubernetes {
     systemctl daemon-reload
     systemctl enable kubelet
@@ -61,6 +67,7 @@ EOF
 
 download_kubernetes
 copy_configuration
+fix_permissions
 setup_kubernetes
 wait_for_kubernetes_api
 install_cluster_addons
