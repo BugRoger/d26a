@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: kubernetes
+  namespace: kube-system
+spec: 
+  hostNetwork: true
+  containers: 
+    - name: kube-apiserver
+      image: gcr.io/google_containers/hyperkube:1.1.1
+      args: 
+        - /hyperkube
+        - apiserver
+        - --allow-privileged=true
+        - --etcd-servers=http://127.0.0.1:2379
+        - --bind-address=0.0.0.0
+        - --insecure-bind-address=0.0.0.0
+        - --secure_port=443
+        - --service-cluster-ip-range=10.0.0.0/16
+        - --kubelet-https=true
+        - --kubelet-certificate-authority=/etc/kubernetes/ssl/ca.pem
+        - --kubelet-client-certificate=/etc/kubernetes/ssl/client.pem
+        - --kubelet-client-key=/etc/kubernetes/ssl/client-key.pem
+        - --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+        - --tls-cert-file=/etc/kubernetes/ssl/server.pem
+        - --tls-private-key-file=/etc/kubernetes/ssl/server-key.pem
+        - --client-ca-file=/etc/kubernetes/ssl/ca.pem
+        - --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem
+      volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: etc-kubernetes
+          readOnly: true
+        - mountPath: /etc/ssl/certs
+          name: etc-ssl-certs 
+          readOnly: true
+    - name: kube-proxy
+      image: gcr.io/google_containers/hyperkube:1.1.1
+      args:
+        - /hyperkube
+        - proxy
+        - --master=http://127.0.0.1:8080
+      securityContext:
+        privileged: true
+    - name: scheduler-elector
+      image: gcr.io/google_containers/podmaster:1.1
+      command:
+        - /podmaster
+        - --etcd-servers=http://127.0.0.1:2379
+        - --key=scheduler
+        - --source-file=/etc/kubernetes/podmaster/kube-scheduler.manifest
+        - --dest-file=/etc/kubernetes/manifests/kube-scheduler.manifest
+      volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: etc-kubernetes
+    - name: controller-manager-elector
+      image: gcr.io/google_containers/podmaster:1.1
+      command:
+        - /podmaster
+        - --etcd-servers=http://127.0.0.1:2379
+        - --key=controller
+        - --source-file=/etc/kubernetes/podmaster/kube-controller-manager.manifest
+        - --dest-file=/etc/kubernetes/manifests/kube-controller-manager.manifest
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: etc-kubernetes
+  volumes:
+    - name: etc-kubernetes
+      hostPath:
+        path: /etc/kubernetes
+    - name: etc-ssl-certs 
+      hostPath:
+        path: /etc/ssl/certs/
+EOF

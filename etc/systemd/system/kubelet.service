@@ -1,0 +1,18 @@
+[Service]
+ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
+ExecStart=/opt/bin/kubelet \
+  --address=0.0.0.0 \
+  --port=10250 \
+  --tls-private-key-file=/etc/kubernetes/server-key.pem \
+  --tls-cert-file=/etc/kubernetes/server.pem \
+  --api-servers=https://127.0.0.1 \
+  --kubeconfig=/etc/kubernetes/kubeconfig \
+  --allow-privileged=true \
+  --config=/etc/kubernetes/manifests \
+  --cluster_dns=10.0.254.254 \
+  --cluster_domain=d26a.de \
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
