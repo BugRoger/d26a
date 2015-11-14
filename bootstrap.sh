@@ -3,6 +3,8 @@
 set -o errexit
 set -o pipefail
 
+cd "$(dirname "$0")"
+
 function wait_for_kubernetes_api {
     echo "Waiting for Kubernetes API..."
     until curl --silent "http://127.0.0.1:8080/version" &> /dev/null
