@@ -5,7 +5,7 @@ set -o pipefail
 
 cd "$(dirname "$0")"
 
-KUBERNETES_VERSION=1.1.1
+KUBERNETES_VERSION=v1.1.1
 
 function wait_for_kubernetes_api {
     echo "Waiting for Kubernetes API..."
