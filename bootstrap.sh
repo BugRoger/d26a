@@ -58,19 +58,6 @@ function setup_networking {
         iptables -t nat -F POSTROUTING
     fi
 
-    local TEMPLATE=/etc/systemd/network/d26a.network
-    [ -f $TEMPLATE ] || {
-        echo "Writing Template: $TEMPLATE"
-        mkdir -p $(dirname $TEMPLATE)
-        cat << EOF > $TEMPLATE
-[Match]
-Name=d26a
-[Network]
-Address=$SUBNET
-EOF
-        systemctl daemon-reload
-    }
-
     local TEMPLATE=/etc/systemd/system/docker.service.d/90-d26a-network.conf
     [ -f $TEMPLATE ] || {
         echo "Writing Template: $TEMPLATE"
