@@ -49,14 +49,14 @@ function setup_networking {
     SUBNET_ID=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
     SUBNET=172.16.$SUBNET_ID.1/24
 
-    if ifconfig docker0 &> /dev/null
-    then
-        echo "Deleting docker0 bridge"
-        systemctl stop docker
-        ip link set dev docker0 down
-        brctl delbr docker0
-        iptables -t nat -F POSTROUTING
-    fi
+    #if ifconfig docker0 &> /dev/null
+    #then
+    #    echo "Deleting docker0 bridge"
+    #    systemctl stop docker
+    #    ip link set dev docker0 down
+    #    brctl delbr docker0
+    #    iptables -t nat -F POSTROUTING
+    #fi
 
     local TEMPLATE=/etc/systemd/system/docker.service.d/90-d26a-network.conf
     [ -f $TEMPLATE ] || {
