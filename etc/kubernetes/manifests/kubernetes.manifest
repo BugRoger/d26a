@@ -71,4 +71,3 @@ spec:
     - name: etc-ssl-certs 
       hostPath:
         path: /etc/ssl/certs/
-EOF
