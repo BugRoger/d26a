@@ -46,26 +46,35 @@ function setup_kubernetes {
 }
 
 function setup_networking {
+    SUBNET_ID=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
+    SUBNET=172.16.$SUBNET_ID.0/24
+    BIP=172.16.$SUBNET_ID.1/24
+
+    if ifconfig docker0 &> /dev/null
+    then
+        echo "Deleting docker0 bridge"
+        systemctl stop docker
+        ip link set dev docker0 down
+        brctl delbr docker0
+        iptables -t nat -F POSTROUTING
+    fi
+
     if ! ifconfig d26a &> /dev/null
     then
-        echo "Creating network setup"
+        echo "Creating d26a bridge on subnet $SUBNET"
         systemctl stop docker
-
-        if ifconfig docker0 &> /dev/null
-        then
-            ip link set dev docker0 down
-            brctl delbr docker0
-            iptables -t nat -F POSTROUTING
-        fi
-      
-        SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
-        echo "Creating bridge for subnet 127.16.$SUBNET.0/24"
         brctl addbr d26a
-        ip addr add 172.16.$SUBNET.0/24 dev d26a
+        ip addr add $SUBNET dev d26a
         ip link set dev d26a up
 
-        systemctl start docker
+        cat <<EOF > /etc/systemd/system/docker.service.d/90-d26a-network.com 
+[Service]
+Environment="DOCKER_OPTS=--bip=$BIP --ip-masq=false"
+EOF
+        systemctl daemon-reload
     fi
+
+    systemctl start docker
 }
 
 function install_cluster_addons {
