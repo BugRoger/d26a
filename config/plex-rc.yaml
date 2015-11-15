@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: plex
+spec:
+  replicas: 1 
+  selector:
+    app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+        - name: plex 
+          image: bugroger/plex 
+          ports:
+            - containerPort: 32400
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /data
+              name: data
+      volumes:
+        - name: data
+          hostPath:
+            path: /mnt/data/videos/media
+        - name: config
+          hostPath: 
+            path: /mnt/data/plex
