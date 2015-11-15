@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: sonarr 
+spec:
+  replicas: 1 
+  selector:
+    app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+        - name: sonarr 
+          image: bugroger/sonarr
+          ports:
+            - containerPort: 8989 
+          volumeMounts:
+            - mountPath: /volumes/config
+              name: config
+            - mountPath: /volumes/completed
+              name: completed 
+            - mountPath: /volumes/media
+              name: media
+      volumes:
+        - name: config
+          hostPath:
+            path: /mnt/data/sonarr/config
+        - name: completed
+          hostPath:
+            path: /mnt/data/videos/downloads/tv
+        - name: media
+          hostPath:
+            path: /mnt/data/videos/media
