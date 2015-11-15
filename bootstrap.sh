@@ -37,10 +37,10 @@ function download_kubernetes {
 
 function copy_configuration {
     cp -R etc /
+    systemctl daemon-reload
 }
 
 function setup_kubernetes {
-    systemctl daemon-reload
     systemctl enable kubelet
     systemctl start kubelet
 }
