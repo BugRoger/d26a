@@ -78,12 +78,13 @@ coreos:
       command: "start"
       content: |
         [Unit]
-        Requires=docker.service
-        After=docker.service
+        After=network-online.target
+        Wants=network-online.target
 
         [Service]
         Type=oneshot
         RemainAfterExit=false
+        EnvironmentFile=-/etc/environment
         ExecStart=/usr/bin/bash -c "[ -d /var/lib/d26a ] || git clone https://github.com/bugroger/d26a /var/lib/d26a"
         ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git pull origin master"
         ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git reset --hard && git pull origin master"
