@@ -30,7 +30,7 @@ coreos:
 
         [Network]
         DHCP=both
-        UseDomains=true
+        Domains=d26a.de
     - name: ethernet1.network
       command: restart
       content: |
