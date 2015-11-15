@@ -19,7 +19,7 @@ function wait_for_kubernetes_api {
 function download_kubernetes {
     mkdir -p /opt/bin
 
-    if ! kubelet --version=true 2> /dev/null | grep -q ${KUBERNETES_VERSION}
+    if ! kubelet --version=true 2> /dev/null | grep -q $KUBERNETES_VERSION
     then
       echo "Downloading Kubelet ${KUBERNETES_VERSION}..."
       systemctl stop kubelet &> /dev/null || true
@@ -27,7 +27,7 @@ function download_kubernetes {
       chmod +x /opt/bin/kubelet
     fi
 
-    if ! kubectl version -c 2> /dev/null | grep -q ${KUBERNETES_VERSION}
+    if ! kubectl version -c 2> /dev/null | grep -q $KUBERNETES_VERSION
     then
       echo "Downloading Kubectl ${KUBERNETES_VERSION}..."
       wget -N -q -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubectl
@@ -48,11 +48,13 @@ function setup_kubernetes {
 function setup_networking {
     if ! ifconfig d26a &> /dev/null
     then
+        echo "Creating network setup"
         systemctl stop docker
 
         if ifconfig docker0 &> /dev/null
         then
             ip link set dev docker0 down
+            brctl delbr docker0
             iptables -t nat -F POSTROUTING
         fi
       
