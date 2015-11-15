@@ -57,6 +57,7 @@ function setup_networking {
         fi
       
         SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
+        echo "Creating bridge for subnet 127.16.$SUBNET.0/24"
         brctl addbr d26a
         ip addr add 172.16.$SUBNET.0/24 dev d26a
         ip link set dev d26a up
