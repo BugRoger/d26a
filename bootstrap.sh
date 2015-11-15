@@ -45,22 +45,38 @@ function setup_kubernetes {
     systemctl start kubelet
 }
 
+function setup_networking {
+    if ifconfig docker0 &> /dev/null
+    then
+      systemctl stop docker
+      ip link set dev docker0 down
+      iptables -t nat -F POSTROUTING
+
+      SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
+      brctl addbr d26a
+      ip addr add 172.16.$SUBNET.0/24 dev d26a
+      ip link set dev d26a up
+      systemctl start docker
+    fi
+}
+
 function install_cluster_addons {
-  # TODO: Use CURL to push this in. Remove kubectl from downloads
-  echo "Installing cluster addons..."
-  if ! kubectl get namespace kube-system &> /dev/null 
-  then
-    cat <<EOF | kubectl create -f - -- &> /dev/null || true
+    # TODO: Use CURL to push this in. Remove kubectl from downloads
+    echo "Installing cluster addons..."
+    if ! kubectl get namespace kube-system &> /dev/null 
+    then
+      cat <<EOF | kubectl create -f - -- &> /dev/null || true
 apiVersion: v1
 kind: Namespace
 metadata:
   name: kube-system
 EOF
-  fi
+    fi
 }
 
 download_kubernetes
 copy_configuration
+setup_networking
 setup_kubernetes
 wait_for_kubernetes_api
 install_cluster_addons
