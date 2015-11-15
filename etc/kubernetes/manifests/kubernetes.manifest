@@ -38,7 +38,12 @@ spec:
       args:
         - /hyperkube
         - proxy
-        - --master=http://127.0.0.1:8080
+        - --kubeconfig=/etc/kubernetes/kubeconfig 
+        - --v=99
+      volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: etc-kubernetes
+          readOnly: true
       securityContext:
         privileged: true
     - name: scheduler-elector
