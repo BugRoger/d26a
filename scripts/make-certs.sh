@@ -12,7 +12,7 @@ usage() {
 
 validate() {
   BIN_DIR=${BIN_DIR:-/opt/bin}
-  CERT_DIR=${CERT_DIR:-/etc/kubernetes}
+  CERT_DIR=${CERT_DIR:-/etc/kubernetes/ssl}
   SANS=$(hostname -f)
 
   while [[ $# > 1 ]]
@@ -115,8 +115,8 @@ CONFIG
         {
           "C": "DE",
           "L": "Berlin",
-          "O": "SAP SE",
-          "OU": "Monsoon Kubernetes Operations",
+          "O": "D26A",
+          "OU": "Kubernetes Operations",
           "ST": "Berlin"
         }
       ]
@@ -133,13 +133,13 @@ SERVER_CSR
         "algo": "rsa",
         "size": 2048
       },
-      "CN": "Monsoon Kubernetes Client Certificate: $CN",
+      "CN": "Kubernetes Client Certificate: $CN",
       "names": [
         {
           "C": "DE",
           "L": "Berlin",
-          "O": "SAP SE",
-          "OU": "Monsoon Kubernetes Operations",
+          "O": "D26A",
+          "OU": "Kubernetes Operations",
           "ST": "Berlin"
         }
       ]

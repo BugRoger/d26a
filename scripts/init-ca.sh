@@ -40,8 +40,8 @@ validate() {
 
 
 prepare() {
-  mkdir -p /etc/kubernetes
-  cd /etc/kubernetes
+  mkdir -p /etc/kubernetes/ssl
+  cd /etc/kubernetes/ssl
 }
 
 download_binaries() {
@@ -70,8 +70,8 @@ init_ca() {
         {
           "C": "DE",
           "L": "Berlin",
-          "O": "SAP SE",
-          "OU": "Monsoon Kubernetes CA Root Certificate: $OU",
+          "O": "D26A",
+          "OU": "Kubernetes CA Root Certificate: $OU",
           "ST": "Berlin"
         }
       ]
@@ -117,4 +117,4 @@ main() {
   init_ca
 }
 
-[[ -f /etc/kubernetes/ca.pem ]] || main "$@"
+[[ -f /etc/kubernetes/ssl/ca.pem ]] || main "$@"
