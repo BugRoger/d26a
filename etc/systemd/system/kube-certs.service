@@ -7,11 +7,7 @@ After=cfssl.service
 Type=oneshot
 RemainAfterExit=true
 EnvironmentFile=/etc/environment
-ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes
-ExecStartPre=/usr/bin/mkdir -p /opt/bin
-ExecStartPre=/usr/bin/wget -N -P /opt/bin https://github.wdf.sap.corp/monsoon/monsoon-kube/raw/master/scripts/make-certs
-ExecStartPre=/usr/bin/chmod +x /opt/bin/make-certs
-ExecStart=/opt/bin/make-certs -r 127.0.0.1:8888 \
+ExecStart=/var/lib/d26a/scripts/make-certs.sh -r 127.0.0.1:8888 \
     -t 3f71fde1996b56be1f6bda9bf445d538 \
     -c ${COREOS_PUBLIC_IPV4}@kubernetes.d26a.de %> \
     -s kubernetes.d26a.de %> \
