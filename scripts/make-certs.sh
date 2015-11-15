@@ -110,14 +110,14 @@ CONFIG
         "algo": "rsa",
         "size": 2048
       },
-      "CN": "Monsoon Kubernetes Server Certificate: $CN",
+      "CN": "$CN (Server)",
       "names": [
         {
           "C": "DE",
-          "L": "Berlin",
+          "L": "BERLIN",
           "O": "D26A",
-          "OU": "Kubernetes Operations",
-          "ST": "Berlin"
+          "OU": "K8SOPS",
+          "ST": "BERLIN"
         }
       ]
     }
@@ -133,14 +133,14 @@ SERVER_CSR
         "algo": "rsa",
         "size": 2048
       },
-      "CN": "Kubernetes Client Certificate: $CN",
+      "CN": "$CN (Client)",
       "names": [
         {
           "C": "DE",
-          "L": "Berlin",
+          "L": "BERLIN",
           "O": "D26A",
-          "OU": "Kubernetes Operations",
-          "ST": "Berlin"
+          "OU": "K8SOPS",
+          "ST": "BERLIN"
         }
       ]
     }

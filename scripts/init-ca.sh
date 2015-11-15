@@ -69,10 +69,10 @@ init_ca() {
       "names": [
         {
           "C": "DE",
-          "L": "Berlin",
+          "L": "BERLIN",
           "O": "D26A",
-          "OU": "Kubernetes CA Root Certificate: $OU",
-          "ST": "Berlin"
+          "OU": "$OU (CA)",
+          "ST": "BERLIN"
         }
       ]
     }
