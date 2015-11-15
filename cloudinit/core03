@@ -85,8 +85,8 @@ coreos:
         Type=oneshot
         RemainAfterExit=false
         EnvironmentFile=-/etc/environment
+        ExecStart=/usr/lib/systemd/systemd-networkd-wait-online -i bond0
         ExecStart=/usr/bin/bash -c "[ -d /var/lib/d26a ] || git clone https://github.com/bugroger/d26a /var/lib/d26a"
-        ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git pull origin master"
         ExecStart=/usr/bin/bash -c "cd /var/lib/d26a && git reset --hard && git pull origin master"
         ExecStart=/var/lib/d26a/bootstrap.sh
 
