@@ -7,7 +7,7 @@ spec:
   hostNetwork: true
   containers: 
     - name: kube-apiserver
-      image: gcr.io/google_containers/hyperkube:1.1.1
+      image: gcr.io/google_containers/hyperkube:c1.1.1
       args: 
         - /hyperkube
         - apiserver
@@ -34,7 +34,7 @@ spec:
           name: etc-ssl-certs 
           readOnly: true
     - name: kube-proxy
-      image: gcr.io/google_containers/hyperkube:1.1.1
+      image: gcr.io/google_containers/hyperkube:v1.1.1
       args:
         - /hyperkube
         - proxy
