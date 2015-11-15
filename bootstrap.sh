@@ -46,19 +46,21 @@ function setup_kubernetes {
 }
 
 function setup_networking {
-    if ifconfig docker0 &> /dev/null
-    then
-      systemctl stop docker
-      ip link set dev docker0 down
-      iptables -t nat -F POSTROUTING
-    fi
-    
     if ! ifconfig d26a &> /dev/null
-      SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
-      brctl addbr d26a
-      ip addr add 172.16.$SUBNET.0/24 dev d26a
-      ip link set dev d26a up
-      systemctl start docker
+        systemctl stop docker
+
+        if ifconfig docker0 &> /dev/null
+        then
+            ip link set dev docker0 down
+            iptables -t nat -F POSTROUTING
+        fi
+      
+        SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
+        brctl addbr d26a
+        ip addr add 172.16.$SUBNET.0/24 dev d26a
+        ip link set dev d26a up
+
+        systemctl start docker
     fi
 }
 
