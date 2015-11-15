@@ -15,6 +15,7 @@ ExecStart=/var/lib/d26a/scripts/make-certs.sh -r 127.0.0.1:8888 \
     -s *.kubernetes.d26a.de \
     -s ${COREOS_PUBLIC_IPV4} \
     -s 10.0.0.1 \
+    -s 127.0.0.1 \
     -s kubernetes \
     -s kubernetes.default \
     -s kubernetes.default.svc \
