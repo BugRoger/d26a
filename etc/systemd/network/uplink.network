@@ -1,0 +1,4 @@
+[Match]
+Name=bond0
+[Network]
+Bridge=d26a

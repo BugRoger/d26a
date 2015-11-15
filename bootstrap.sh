@@ -47,8 +47,7 @@ function setup_kubernetes {
 
 function setup_networking {
     SUBNET_ID=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
-    SUBNET=172.16.$SUBNET_ID.0/24
-    BIP=172.16.$SUBNET_ID.1/24
+    SUBNET=172.16.$SUBNET_ID.1/24
 
     if ifconfig docker0 &> /dev/null
     then
@@ -59,20 +58,30 @@ function setup_networking {
         iptables -t nat -F POSTROUTING
     fi
 
-    if ! ifconfig d26a &> /dev/null
-    then
-        echo "Creating d26a bridge on subnet $SUBNET"
-        systemctl stop docker
-        brctl addbr d26a
-        ip addr add $SUBNET dev d26a
-        ip link set dev d26a up
-
-        cat <<EOF > /etc/systemd/system/docker.service.d/90-d26a-network.com 
-[Service]
-Environment="DOCKER_OPTS=--bip=$BIP --ip-masq=false"
+    local TEMPLATE=/etc/systemd/network/d26a.network
+    [ -f $TEMPLATE ] || {
+        echo "Writing Template: $TEMPLATE"
+        mkdir -p $(dirname $TEMPLATE)
+        cat << EOF > $TEMPLATE
+[Match]
+Name=d26a
+[Network]
+Address=$SUBNET
 EOF
         systemctl daemon-reload
-    fi
+    }
+
+    local TEMPLATE=/etc/systemd/system/docker.service.d/90-d26a-network.conf
+    [ -f $TEMPLATE ] || {
+        echo "Writing Template: $TEMPLATE"
+        mkdir -p $(dirname $TEMPLATE)
+        systemctl stop docker
+        cat << EOF > $TEMPLATE
+[Service]
+Environment="DOCKER_OPTS=--bip=$SUBNET --ip-masq=false"
+EOF
+        systemctl daemon-reload
+      }
 
     systemctl start docker
 }
