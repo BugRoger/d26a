@@ -47,6 +47,7 @@ function setup_kubernetes {
 
 function setup_networking {
     if ! ifconfig d26a &> /dev/null
+    then
         systemctl stop docker
 
         if ifconfig docker0 &> /dev/null
