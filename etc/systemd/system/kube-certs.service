@@ -9,7 +9,7 @@ RemainAfterExit=true
 EnvironmentFile=/etc/environment
 ExecStart=/var/lib/d26a/scripts/make-certs.sh -r 127.0.0.1:8888 \
     -t 3f71fde1996b56be1f6bda9bf445d538 \
-    -c ${COREOS_PUBLIC_IPV4}@kubernetes.d26a.de %> \
+    -c ${COREOS_PUBLIC_IPV4}@kubernetes.d26a.de} \
     -s kubernetes.d26a.de %> \
     -s *.kubernetes %> \
     -s *.kubernetes.d26a.de %> \
