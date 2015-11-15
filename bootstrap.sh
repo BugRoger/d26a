@@ -51,7 +51,9 @@ function setup_networking {
       systemctl stop docker
       ip link set dev docker0 down
       iptables -t nat -F POSTROUTING
-
+    fi
+    
+    if ! ifconfig d26a &> /dev/null
       SUBNET=$(echo $COREOS_PUBLIC_IPV4 | cut -f 4 -d.)
       brctl addbr d26a
       ip addr add 172.16.$SUBNET.0/24 dev d26a
