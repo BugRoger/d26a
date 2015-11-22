@@ -24,7 +24,7 @@ spec:
       volumes:
         - name: data
           hostPath:
-            path: /mnt/data/videos/media
+            path: /mnt/data/media/tv
         - name: config
           hostPath: 
             path: /mnt/data/plex

@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: deluge 
+spec:
+  replicas: 1 
+  selector:
+    app: deluge
+  template:
+    metadata:
+      labels:
+        app: deluge
+    spec:
+      containers:
+        - name: deluge 
+          image: bugroger/deluge:6
+          command:
+            - deluged 
+            - -d 
+            - -c
+            - /config
+          ports:
+            - name: daemon
+              containerPort: 58846
+          volumeMounts:
+            - mountPath: /data/download
+              name: data
+            - mountPath: /config
+              name: config
+        - name: deluge-web
+          image: bugroger/deluge:6
+          command:
+            - deluge-web 
+            - -p 
+            - "80"
+          ports:
+            - containerPort: 80 
+          volumeMounts:
+            - mountPath: /config
+              name: config
+        - name: deluge-config
+          image: bugroger/deluge:6
+          command:
+            - deluge-config 
+          ports:
+            - containerPort: 80 
+          volumeMounts:
+            - mountPath: /config
+              name: config
+
+      volumes:
+        - name: data
+          hostPath:
+            path: /mnt/data/downloads/deluge
+        - name: config 
+          hostPath:
+            path: /mnt/data/deluge/config

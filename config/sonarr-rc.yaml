@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: sonarr 
-          image: bugroger/sonarr
+          image: bugroger/sonarr:2.0.0.3573
           ports:
             - containerPort: 8989 
           volumeMounts:
@@ -23,13 +23,20 @@ spec:
               name: completed 
             - mountPath: /volumes/media
               name: media
+          livenessProbe:
+            httpGet:
+              path: /system/status
+              port: 8989 
+              scheme: HTTP
+            initialDelaySeconds: 120
+            timeoutSeconds: 10 
       volumes:
         - name: config
           hostPath:
             path: /mnt/data/sonarr/config
         - name: completed
           hostPath:
-            path: /mnt/data/videos/downloads/tv
+            path: /mnt/data/downloads
         - name: media
           hostPath:
-            path: /mnt/data/videos/media
+            path: /mnt/data/media/tv

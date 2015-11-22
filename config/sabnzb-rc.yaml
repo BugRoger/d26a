@@ -25,7 +25,7 @@ spec:
       volumes:
         - name: data
           hostPath:
-            path: /mnt/data/videos
+            path: /mnt/data/downloads/sabnzb
         - name: config
           hostPath: 
             path: /mnt/data/sabnzb/config
