@@ -17,3 +17,10 @@ spec:
           ports:
             - name: http 
               containerPort: 9090
+          volumeMounts:
+            - mountPath: /prometheus
+              name: prometheus
+      volumes:
+        - name: prometheus
+          hostPath:
+            path: /mnt/data/prometheus
