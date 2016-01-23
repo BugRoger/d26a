@@ -26,7 +26,7 @@ spec:
         - --tls-private-key-file=/etc/kubernetes/ssl/server-key.pem
         - --client-ca-file=/etc/kubernetes/ssl/ca.pem
         - --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem
-        - --runtime-config=extensions/v1beta1=true,extensions/v1beta1/ingress=true
+        - --runtime-config=extensions/v1beta1=true,extensions/v1beta1/ingress=true,extensions/v1beta1/daemonsets=true
       volumeMounts:
         - mountPath: /etc/kubernetes
           name: etc-kubernetes
