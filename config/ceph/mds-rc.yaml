@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ceph-mds
+
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        daemon: ceph-mds
+    spec:
+      hostNetwork: true
+      volumes:
+        - name: etc-ceph
+          hostPath:
+            path: /etc/ceph
+        - name: var-lib-ceph-mds
+          hostPath:
+            path: /var/lib/ceph/mds
+      containers:
+        - name: mds
+          image: bugroger/ceph-mds
+          volumeMounts:
+            - name: var-lib-ceph-mds
+              mountPath: /var/lib/ceph/mds
+            - name: etc-ceph
+              mountPath: /etc/ceph
+          env:
+            - name: MDS_NAME
+              value: "1"

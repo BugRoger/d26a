@@ -13,18 +13,34 @@ spec:
     spec:
       containers:
         - name: plex 
-          image: bugroger/plex 
+          image: wernight/plex-media-server:0.9.14.6
           ports:
             - containerPort: 32400
           volumeMounts:
-            - mountPath: /config
+            - mountPath: "/media"
+              name: media
+            - mountPath: "/config"
               name: config
-            - mountPath: /data
-              name: data
       volumes:
-        - name: data
-          hostPath:
-            path: /mnt/data/media/tv
         - name: config
-          hostPath: 
-            path: /mnt/data/plex
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /plex
+            user: admin
+            secretRef:
+              name: ceph-secret
+        - name: media
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /media
+            user: admin
+            secretRef:
+              name: ceph-secret
+
+

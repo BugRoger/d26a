@@ -21,5 +21,12 @@ spec:
               name: data
       volumes:
         - name: data
-          hostPath:
-            path: /mnt/data/grafana
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /grafana
+            user: admin
+            secretRef:
+              name: ceph-secret

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ceph-mon-core1
+
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        daemon: ceph-mon
+        node: core01
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/hostname: 192.168.2.2
+      volumes:
+        - name: etc-ceph
+          hostPath:
+            path: /etc/ceph
+        - name: var-lib-ceph
+          hostPath:
+            path: /var/lib/ceph
+      containers:
+        - name: osd
+          image: bugroger/ceph-mon
+          volumeMounts:
+            - name: var-lib-ceph
+              mountPath: /var/lib/ceph
+            - name: etc-ceph
+              mountPath: /etc/ceph
+          env:
+            - name: MON_IP
+              value: 192.168.2.2
+            - name: MON_NAME
+              value: core01
+          ports:
+            - containerPort: 6789
+              hostPort: 6789

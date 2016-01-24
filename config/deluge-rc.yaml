@@ -47,11 +47,24 @@ spec:
           volumeMounts:
             - mountPath: /config
               name: config
-
       volumes:
+        - name: config
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /deluge/config
+            user: admin
+            secretRef:
+              name: ceph-secret
         - name: data
-          hostPath:
-            path: /mnt/data/downloads/deluge
-        - name: config 
-          hostPath:
-            path: /mnt/data/deluge/config
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /downloads/deluge
+            user: admin
+            secretRef:
+              name: ceph-secret

@@ -22,5 +22,12 @@ spec:
               name: prometheus
       volumes:
         - name: prometheus
-          hostPath:
-            path: /mnt/data/prometheus
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /prometheus
+            user: admin
+            secretRef:
+              name: ceph-secret

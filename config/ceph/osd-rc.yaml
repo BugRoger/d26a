@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ceph-osd
+
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        daemon: ceph-osd
+    spec:
+      volumes:
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: etc-ceph
+          hostPath:
+            path: /etc/ceph
+        - name: var-lib-ceph-osd
+          hostPath:
+            path: /var/lib/ceph/osd
+      containers:
+        - name: osd
+          image: bugroger/ceph-osd
+          volumeMounts:
+            - name: dev
+              mountPath: /dev
+            - name: var-lib-ceph-osd
+              mountPath: /var/lib/ceph/osd
+            - name: etc-ceph
+              mountPath: /etc/ceph
+          ports:
+            - containerPort: 39999
+              hostPort: 39999
+          securityContext:
+            privileged: true

@@ -32,11 +32,32 @@ spec:
             timeoutSeconds: 10 
       volumes:
         - name: config
-          hostPath:
-            path: /mnt/data/sonarr/config
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /sonarr/config
+            user: admin
+            secretRef:
+              name: ceph-secret
         - name: completed
-          hostPath:
-            path: /mnt/data/downloads
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /downloads
+            user: admin
+            secretRef:
+              name: ceph-secret
         - name: media
-          hostPath:
-            path: /mnt/data/media/tv
+          cephfs:
+            monitors:
+              - 192.168.2.2:6789
+              - 192.168.2.3:6789
+              - 192.168.2.4:6789
+            subdir: /media/tv
+            user: admin
+            secretRef:
+              name: ceph-secret
