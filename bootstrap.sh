@@ -23,7 +23,8 @@ function download_kubernetes {
     then
       echo "Downloading Kubelet ${KUBERNETES_VERSION}..."
       systemctl stop kubelet &> /dev/null || true
-      wget -N -q -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubelet
+      wget -N -q -P /opt/bin https://github.com/BugRoger/d26a/releases/download/v1.1.5-cephfs/kubelet
+      #wget -N -q -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubelet
       chmod +x /opt/bin/kubelet
     fi
 
