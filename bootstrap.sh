@@ -5,7 +5,7 @@ set -o pipefail
 
 cd "$(dirname "$0")"
 
-KUBERNETES_VERSION=v1.1.1
+KUBERNETES_VERSION=v1.1.5-cephfs
 
 function wait_for_kubernetes_api {
     echo "Waiting for Kubernetes API..."
@@ -26,13 +26,6 @@ function download_kubernetes {
       wget -P /opt/bin https://github.com/BugRoger/d26a/releases/download/v1.1.5-cephfs/kubelet
       #wget -N -q -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubelet
       chmod +x /opt/bin/kubelet
-    fi
-
-    if ! kubectl version -c 2> /dev/null | grep -q $KUBERNETES_VERSION
-    then
-      echo "Downloading Kubectl ${KUBERNETES_VERSION}..."
-      wget -N -q -P /opt/bin https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubectl
-      chmod +x /opt/bin/kubectl
     fi
 }
 
