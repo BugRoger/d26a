@@ -13,11 +13,11 @@ spec:
     spec:
       containers:
         - name: grafana 
-          image: grafana/grafana:2.5.0
+          image: grafana/grafana:2.6.0
           ports:
             - containerPort: 3000 
           volumeMounts:
-            - mountPath: /var/lib/grafana"
+            - mountPath: /var/lib/grafana
               name: data
       volumes:
         - name: data
