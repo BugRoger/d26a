@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: prometheus 
-          image: bugroger/prometheus:2
+          image: bugroger/prometheus:7
           ports:
             - name: http 
               containerPort: 9090

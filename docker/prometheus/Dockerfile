@@ -1,4 +1,4 @@
-FROM bugroger/prometheus-base:1
+FROM prom/prometheus
 
 ADD prometheus.yml /etc/prometheus/prometheus.yml
 
