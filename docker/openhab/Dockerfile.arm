@@ -1,0 +1,22 @@
+FROM hypriot/rpi-java
+
+ENV OPENHAB_VERSION=1.8.1
+
+RUN apt-get update && \
+    apt-get install -y curl ca-certificates unzip && \
+    cd /tmp && \
+    mkdir -p /opt/openhab /opt/openhab/addons /opt/openhab/addons-available && \
+    curl -sLo runtime.zip \
+        https://bintray.com/artifact/download/openhab/bin/distribution-${OPENHAB_VERSION}-runtime.zip && \
+        unzip runtime.zip -d /opt/openhab && \
+    curl -sLo addons.zip \
+        https://bintray.com/artifact/download/openhab/bin/distribution-${OPENHAB_VERSION}-addons.zip && \
+        unzip addons.zip -d /opt/openhab/addons-available && \
+    apt-get purge curl ca-certificates unzip && \
+    rm -rf /tmp/* /var/lib/apt/list/*
+
+COPY entrypoint.sh /opt/openhab/entrypoint.sh
+RUN chmod +x /opt/openhab/entrypoint.sh
+VOLUME /opt/openhab/configurations
+EXPOSE 8080 8443
+ENTRYPOINT ["/opt/openhab/entrypoint.sh"]
