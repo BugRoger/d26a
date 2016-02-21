@@ -1,0 +1,26 @@
+Group All
+Group Oben            "Oben"            (All)
+Group Unten           "Unten"           (All)
+Group Unten_Kueche    "Kueche"          (Unten)
+Group Unten_Bad       "Bad"             (Unten)
+Group Unten_Flur      "Flur"            (Unten)
+Group Unten_Geruempel "Geruempelkammer" (Unten)
+Group Unten_Spielen   "Spielzimmer"     (Unten)
+Group Unten_Essen     "Esszimmer"       (Unten)
+Group Unten_Wohnen    "Wohnzimmer"      (Unten)
+Group Oben_Arbeiten   "Schreibtisch"    (Oben)
+Group Oben_Schlafen   "Bett"	        (Oben)
+
+/* active groups */
+Group:Switch:OR(ON, OFF)	Licht	    "Alles [(%d)]"	(All)
+Group:Switch:OR(ON, OFF)	Licht_Oben	"Oben [(%d)]"	(All)
+Group:Switch:OR(ON, OFF)	Licht_Unten	"Unten [(%d)]"	(All)
+
+/* Lights */
+Switch Licht_Oben_Arbeiten_Monitor_Backlight "Backlight"     (Licht, Licht_Oben, Oben, Oben_Arbeiten) {knx="2/0/0"}
+Switch Licht_Oben_Arbeiten_Basteltisch       "Basteltisch"   (Licht, Licht_Oben, Oben, Oben_Arbeiten)
+Switch Licht_Oben_Schlafen_Leseleuchte       "Leseleuchte"   (Licht, Licht_Oben, Oben, Oben_Schlafen)
+Switch Licht_Unten_Wohnen_Leseecke           "Leseecke"      (Licht, Licht_Unten, Unten, Unten_Wohnen)
+Switch Licht_Unten_Wohnen_Fenster            "Lichterkette"  (Licht, Licht_Unten, Unten, Unten_Wohnen)
+
+
