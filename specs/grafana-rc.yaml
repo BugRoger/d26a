@@ -11,6 +11,8 @@ spec:
       labels:
         app: grafana
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: grafana 
           image: grafana/grafana:2.6.0

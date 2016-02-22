@@ -11,6 +11,8 @@ spec:
         daemon: ceph-mds
     spec:
       hostNetwork: true
+      nodeSelector:
+        arch: amd64
       volumes:
         - name: etc-ceph
           hostPath:

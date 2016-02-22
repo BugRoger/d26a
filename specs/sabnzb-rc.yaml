@@ -11,6 +11,8 @@ spec:
       labels:
         app: sabnzb
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: sabnzb
           image: timhaak/sabnzbd

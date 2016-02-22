@@ -19,6 +19,8 @@ spec:
         version: v8
         kubernetes.io/cluster-service: "true"
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
       - name: etcd
         image: gcr.io/google_containers/etcd:2.0.9

@@ -11,6 +11,8 @@ spec:
       labels:
         app: prometheus
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: prometheus 
           image: bugroger/prometheus:7

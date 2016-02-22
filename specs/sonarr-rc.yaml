@@ -11,6 +11,8 @@ spec:
       labels:
         app: sonarr
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: sonarr 
           image: bugroger/sonarr:2.0.0.3573

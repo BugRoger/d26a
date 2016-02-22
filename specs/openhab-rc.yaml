@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openhab
+spec:
+  replicas: 1 
+  selector:
+    app: openhab
+  template:
+    metadata:
+      labels:
+        app: openhab
+    spec:
+      hostNetwork: true
+      containers:
+        - name: openhab 
+          image: bugroger/openhab:5
+          ports:
+            - containerPort: 8080
+            - containerPort: 8433
+          env:
+            - name: ADDONS
+              value: org.openhab.binding.http,org.openhab.binding.ntp,org.openhab.binding.knx
+          volumeMounts:
+            - mountPath: /etc/openhab
+              name: configurations
+            - mountPath: /opt/openhab/logs
+              name: logs
+      volumes:
+        - name: configurations 
+          gitRepo:
+            repository: https://github.com/BugRoger/configurations.git
+            revision: master
+        - name: logs
+          emptyDir: {}
+      nodeSelector:
+        arch: arm

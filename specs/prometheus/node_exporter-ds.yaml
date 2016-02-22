@@ -10,6 +10,8 @@ spec:
         node: any
     spec:
       hostNetwork: true
+      nodeSelector:
+        arch: amd64
       containers:
         - name: node-exporter
           image: prom/node-exporter

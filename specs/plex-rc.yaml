@@ -11,6 +11,8 @@ spec:
       labels:
         app: plex
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: plex 
           image: wernight/plex-media-server:0.9.14.6

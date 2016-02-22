@@ -11,6 +11,8 @@ spec:
       labels:
         app: deluge
     spec:
+      nodeSelector:
+        arch: amd64
       containers:
         - name: deluge 
           image: bugroger/deluge:6
