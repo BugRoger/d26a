@@ -17,6 +17,5 @@ RUN apt-get update && \
 
 COPY entrypoint.sh /opt/openhab/entrypoint.sh
 RUN chmod +x /opt/openhab/entrypoint.sh
-VOLUME /opt/openhab/configurations
 EXPOSE 8080 8443
 ENTRYPOINT ["/opt/openhab/entrypoint.sh"]

@@ -14,4 +14,6 @@ do
   fi
 done
 
+rm -rf /opt/openhab/configurations
+ln -s /etc/openhab/configurations /opt/openhab
 /opt/openhab/start.sh
