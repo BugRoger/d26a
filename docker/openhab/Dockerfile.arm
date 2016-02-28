@@ -5,13 +5,20 @@ ENV OPENHAB_VERSION=1.8.1
 RUN apt-get update && \
     apt-get install -y curl ca-certificates unzip && \
     cd /tmp && \
-    mkdir -p /opt/openhab /opt/openhab/addons /opt/openhab/addons-available && \
+    mkdir -p /opt/openhab /opt/openhab/addons /opt/openhab/addons-available /opt/openhab/webapps/habmin2 && \
     curl -sLo runtime.zip \
         https://bintray.com/artifact/download/openhab/bin/distribution-${OPENHAB_VERSION}-runtime.zip && \
         unzip runtime.zip -d /opt/openhab && \
     curl -sLo addons.zip \
         https://bintray.com/artifact/download/openhab/bin/distribution-${OPENHAB_VERSION}-addons.zip && \
         unzip addons.zip -d /opt/openhab/addons-available && \
+    curl -sLo /opt/openhab/addons-available/org.openhab.io.habmin-1.7.0-SNAPSHOT.jar \
+        https://github.com/cdjackson/HABmin/raw/master/addons/org.openhab.io.habmin-1.7.0-SNAPSHOT.jar && \
+    curl -sLo /opt/openhab/addons-available/org.openhab.ui.habmin_2.0.0.SNAPSHOT-0.0.15.jar \
+        https://github.com/cdjackson/HABmin2/releases/download/0.0.15/org.openhab.ui.habmin_2.0.0.SNAPSHOT-0.0.15.jar && \
+    curl -sLo habmin2.zip \
+        https://github.com/cdjackson/HABmin2/releases/download/0.0.15/HABmin2-0.0.15-release.zip && \
+        unzip habmin2.zip -d /opt/openhab/webapps/habmin2 && \
     apt-get purge curl ca-certificates unzip && \
     rm -rf /tmp/* /var/lib/apt/list/*
 

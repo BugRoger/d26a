@@ -11,8 +11,23 @@ RUN apk add --update curl ca-certificates && \
     curl -sLo addons.zip \
         https://bintray.com/artifact/download/openhab/bin/distribution-${OPENHAB_VERSION}-addons.zip && \
         unzip addons.zip -d /opt/openhab/addons-available && \
+    curl -sLo /opt/openhab/addons-available/org.openhab.io.habmin-1.7.0-SNAPSHOT.jar \
+        https://github.com/cdjackson/HABmin/raw/master/addons/org.openhab.io.habmin-1.7.0-SNAPSHOT.jar && \
+    curl -sLo /opt/openhab/addons-available/org.openhab.ui.habmin_2.0.0.SNAPSHOT-0.0.15.jar \
+        https://github.com/cdjackson/HABmin2/releases/download/0.0.15/org.openhab.ui.habmin_2.0.0.SNAPSHOT-0.0.15.jar && \
     apk del curl ca-certificates  && \
     rm -rf /tmp/* /var/cache/apk/*
+
+
+RUN apk add --update curl ca-certificates && \
+    mkdir -p /opt/openhab/webapps/habmin2 && \
+    cd /tmp && \
+    curl -sLo habmin2.zip \
+        https://github.com/cdjackson/HABmin2/releases/download/0.0.15/HABmin2-0.0.15-release.zip && \
+        unzip habmin2.zip -d /opt/openhab/webapps/habmin2 && \
+    apk del curl ca-certificates  && \
+    rm -rf /tmp/* /var/cache/apk/*
+
 
 COPY entrypoint.sh /opt/openhab/entrypoint.sh
 RUN chmod +x /opt/openhab/entrypoint.sh
