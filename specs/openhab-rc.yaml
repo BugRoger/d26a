@@ -14,13 +14,13 @@ spec:
       hostNetwork: true
       containers:
         - name: openhab 
-          image: bugroger/openhab:arm-1
+          image: bugroger/openhab:arm-4
           ports:
             - containerPort: 8080
             - containerPort: 8433
           env:
             - name: ADDONS
-              value: org.openhab.binding.http,org.openhab.binding.ntp,org.openhab.binding.knx,openhab.io.habmin,org.openhab.binding.zwave,org.openhab.ui.habmin_2.0.0.SNAPSHO
+              value: org.openhab.binding.http,org.openhab.binding.ntp,org.openhab.binding.knx,org.openhab.io.habmin,org.openhab.binding.zwave,org.openhab.ui.habmin_2.0.0.SNAPSHOT
           volumeMounts:
             - mountPath: /etc/openhab
               name: configurations
@@ -36,7 +36,7 @@ spec:
             repository: https://github.com/BugRoger/configurations.git
             revision: master
         - name: zwave
-          hostDir:
+          hostPath:
             path: /dev/ttyACM0
         - name: logs
           emptyDir: {}
