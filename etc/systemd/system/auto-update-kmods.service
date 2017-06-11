@@ -1,0 +1,13 @@
+[Unit]
+Description=Install custom kernel modules
+After=usr-lib64.mount network-online.target
+Requires=usr-lib64.mount network-online.target
+ConditionPathExists=!/opt/modules/%v
+ConditionPathExistsGlob=/usr/lib64/modules/auto-update-kmods.d/*.sh
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -ex /usr/lib64/modules/auto-update-kmods.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,1 +1,0 @@
-[{"id":"401446660","name":"Kroetetest","deviceType":"custom","targetDevice":"Encapsulated","offUrl":"http://openhab.default.d26a.de/rest/items/KNX_Licht_Oben/state","onUrl":"http://openhab.default.d26a.de/rest/items/KNX_Licht_Oben/state","httpVerb":"PUT","contentType":"text/plain","contentBody":"ON","contentBodyOff":"OFF"}]
