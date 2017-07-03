@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: sonarr 
+
+spec:
+  rules:
+  - host: sonarrr.d26a.de
+    http:
+      paths:
+      - backend:
+          serviceName: sonarr
+          servicePort: 8989

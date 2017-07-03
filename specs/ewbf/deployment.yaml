@@ -1,0 +1,53 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: ewbf 
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ewbf
+    spec:
+      containers:
+        - name: ewbf 
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              alpha.kubernetes.io/nvidia-gpu: 6
+          image: bugroger/ewbf:0.3.4b
+          imagePullPolicy: Always
+          args:
+            - --server 
+            - equihash.eu.nicehash.com 
+            - --port 
+            - "3357"
+            - --user
+            - 1Hiwrdekk4DpKkp2rJ5GApb1ukdE7fJmuF.wupse 
+            - --pass
+            - x
+            - --cuda-devices
+            - "0"
+            - "1"
+            - "2"
+            - "3"
+            - "4"
+            - "5"
+            - --pec 
+            - --eexit
+          volumeMounts:
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+      volumes:
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current

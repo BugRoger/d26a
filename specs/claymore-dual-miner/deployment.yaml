@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: claymore-dual-miner
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: claymore-dual-miner
+    spec:
+      containers:
+        - name: claymore-dual-miner 
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              alpha.kubernetes.io/nvidia-gpu: 6
+          image: bugroger/claymore-dual-miner:9.6 
+          args:
+            - -epool 
+            - stratum+tcp://daggerhashimoto.eu.nicehash.com:3353 
+            - -ewal
+            - 1Hiwrdekk4DpKkp2rJ5GApb1ukdE7fJmuF 
+            - -eworker 
+            - wupse 
+            - -epsw 
+            - x 
+            - -esm 
+            - "3"
+            - -estale 
+            - "0"
+            - -dpool 
+            - stratum+tcp://decred.eu.nicehash.com:3354 
+            - -dwal 
+            - 1Hiwrdekk4DpKkp2rJ5GApb1ukdE7fJmuF 
+            - -wd 
+            - "1"
+            - -allpools 
+            - "1"
+            - -dcri 
+            - "40"
+          volumeMounts:
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+      volumes:
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current

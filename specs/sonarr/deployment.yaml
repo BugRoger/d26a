@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: sonarr 
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+        - name: sabnzb
+          image: bugroger/sonarr:20170701
+          env:
+            - name: TZ
+              value: Europe/Berlin
+            - name: PUID
+              value: "0"
+            - name: PGID
+              value: "0"
+          ports:
+            - containerPort: 8989
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sonarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: shared-media

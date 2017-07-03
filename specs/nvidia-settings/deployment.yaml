@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: nvidia-settings 
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nvidia-settings
+    spec:
+      containers:
+        - name: nvidia-settings 
+          securityContext:
+            privileged: true
+          image: bugroger/x11:381.22
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+      volumes:
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/8.0.61

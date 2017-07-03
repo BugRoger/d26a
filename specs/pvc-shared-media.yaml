@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+
+metadata:
+  name: shared-media
+
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 14Ti

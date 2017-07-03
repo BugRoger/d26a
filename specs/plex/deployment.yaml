@@ -1,0 +1,48 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: plex
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      hostNetwork: true
+      containers:
+        - name: plex
+          image: plexinc/pms-docker:1.7.5.4035-313f93718
+          env:
+            - name: TZ
+              value: Europe/Berlin
+            - name: PLEX_UID
+              value: "0"
+            - name: PLEX_GID
+              value: "0"
+            - name: ADVERTISE_IP
+              value: http://192.168.1.15:32400
+            - name: ALLOWED_NETWORKS
+              value: 192.168.1.0/24,10.0.0.0/8,172.16.0.0/16
+            - name: PLEX_CLAIM
+              value: CLAIM-7TUKHSA2VJ2XJQXBCBT8
+          ports:
+            - containerPort: 32400
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
+            - name: transcode
+              mountPath: /transcode
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: plex-config
+        - name: transcode
+          persistentVolumeClaim:
+            claimName: plex-transcode
+        - name: data
+          persistentVolumeClaim:
+            claimName: shared-media

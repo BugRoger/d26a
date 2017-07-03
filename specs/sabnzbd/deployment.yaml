@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: sabnzbd 
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+    spec:
+      containers:
+        - name: sabnzb
+          image: bugroger/sabnzbd:2.1.0
+          ports:
+            - containerPort: 8080
+            - containerPort: 9090 
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
+              subPath: sabnzbd
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: shared-media
