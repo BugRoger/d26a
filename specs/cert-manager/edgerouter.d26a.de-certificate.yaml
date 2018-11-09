@@ -1,0 +1,20 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: edgerouter-tls
+spec:
+  acme:
+    config:
+    - domains:
+      - edgerouter.d26a.de
+      - edgerouter-ingress.d26a.de
+      http01: 
+        ingressClass: nginx
+  commonName: ""
+  dnsNames:
+  - edgerouter-ingress.d26a.de
+  - edgerouter.d26a.de
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: edgerouter-tls

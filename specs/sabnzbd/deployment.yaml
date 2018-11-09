@@ -11,8 +11,8 @@ spec:
         app: sabnzbd
     spec:
       containers:
-        - name: sabnzb
-          image: bugroger/sabnzbd:2.1.0
+        - name: sabnzbd
+          image: bugroger/sabnzbd:2.3.0
           ports:
             - containerPort: 8080
             - containerPort: 9090 

@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: radarr 
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: "kube-system/client-ca-ingress"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "3"
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+
+spec:
+  tls:
+     - secretName: radarr-tls
+       hosts:
+         - radarr.d26a.de
+  rules:
+  - host: radarr.d26a.de
+    http:
+      paths:
+      - backend:
+          serviceName: radarr 
+          servicePort: 7878

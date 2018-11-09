@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: creepminer
+data:
+  mining.conf: |
+    {
+        "logging" : {
+            "config" : "information",
+            "general" : "information",
+            "logfile" : false,
+            "miner" : "information",
+            "nonceSubmitter" : "information",
+            "output" : {
+                "dirDone" : true,
+                "lastWinner" : true,
+                "nonceConfirmed" : true,
+                "nonceFound" : true,
+                "nonceFoundTooHigh" : false,
+                "nonceSent" : true,
+                "plotDone" : false
+            },
+            "outputType" : "terminal",
+            "path" : "",
+            "plotReader" : "information",
+            "plotVerifier" : "information",
+            "progressBar" : {
+                "fancy" : true,
+                "steady" : false
+            },
+            "server" : "fatal",
+            "session" : "error",
+            "socket" : "off",
+            "useColors" : true,
+            "wallet" : "fatal"
+        },
+        "mining" : {
+            "benchmark" : {
+                "active" : false,
+                "interval" : 60
+            },
+            "bufferChunkCount" : 8,
+            "cpuInstructionSet" : "SSE2",
+            "getMiningInfoInterval" : 3,
+            "gpuDevice" : 0,
+            "gpuPlatform" : 0,
+            "intensity" : 2,
+            "maxBufferSizeMB" : 408,
+            "maxPlotReaders" : 1,
+            "passphrase" : {
+                "algorithm" : "aes-256-cbc",
+                "decrypted" : "",
+                "deleteKey" : false,
+                "encrypted" : "",
+                "iterations" : 1000,
+                "key" : "",
+                "salt" : ""
+            },
+            "plots" : [
+                "/plots/kong0",
+                "/plots/wupse0",
+                "/plots/wupse1",
+                "/plots/wupse2",
+                "/plots/wupse3"
+            ],
+            "rescanEveryBlock" : true,
+            "submissionMaxRetry" : 5,
+            "targetDeadline" : "0y 1m 0d 00:00:00",
+            "timeout" : 45,
+            "urls" : {
+                "miningInfo" : "http://pool.burstcoin.ro:8080",
+                "submission" : "http://pool.burstcoin.ro:8080",
+                "wallet" : "https://wallet.burstcoin.ro"
+            },
+            "useInsecurePlotfiles" : false,
+            "walletRequestRetryWaitTime" : 3,
+            "walletRequestTries" : 5
+        },
+        "webserver" : {
+            "url" : "http://localhost:8080",
+            "activeConnections" : 8,
+            "calculateEveryDeadline" : false,
+            "connectionQueue" : 64,
+            "credentials" : {
+                "pass" : "",
+                "user" : ""
+            },
+            "cumulatePlotsizes" : true,
+            "forwardMinerNames" : true,
+            "forwardUrls" : [
+            ],
+            "start" : true
+        }
+    }

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: claymore-dual-miner
+
+spec:
+  selector:
+    app: claymore-dual-miner
+  ports:
+    - name: tcp
+      port: 3333
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: claymore-dual-miner-exporter
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9278"
+spec:
+  selector:
+    app: claymore-dual-miner
+  ports:
+    - name: tcp
+      port: 9278

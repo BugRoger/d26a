@@ -12,21 +12,10 @@ spec:
       labels:
         app: nvidia-settings
     spec:
+      hostNetwork: true
       containers:
         - name: nvidia-settings 
           securityContext:
             privileged: true
-          image: bugroger/x11:381.22
+          image:  bugroger/nvidia-settings:v201803112115
           imagePullPolicy: Always
-          volumeMounts:
-            - mountPath: /usr/local/nvidia
-              name: nvidia 
-            - mountPath: /usr/local/cuda
-              name: cuda 
-      volumes:
-        - name: nvidia
-          hostPath:
-            path: /opt/nvidia/current
-        - name: cuda
-          hostPath:
-            path: /opt/cuda/8.0.61

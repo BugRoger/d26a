@@ -7,7 +7,7 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -23,7 +23,7 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -33,13 +33,13 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: iscsi-lun2-10gb-ext4
+  name: iscsi-lun2-1gb-ext4
 spec:
   capacity:
-    storage: 10Gi
+    storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -55,7 +55,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -71,7 +71,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -87,7 +87,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -103,7 +103,7 @@ spec:
     storage: 100Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
@@ -113,15 +113,144 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: iscsi-lun6-1tb-ext4
+  name: iscsi-lun7-1tb-ext4
 spec:
   capacity:
     storage: 1Ti
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   iscsi:
     targetPortal: 192.168.1.5:3260
     iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
     lun: 7
     fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun8-8tb-ext4
+spec:
+  capacity:
+    storage: 8Ti
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 8
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun9-100gb-ext4
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 9
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun10-1gb-ext4
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 10
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun11-1gb-ext4
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 11
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun12-1gb-ext4
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 12
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun13-1gb-ext4
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 13
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun14-1gb-ext4
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 14
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-lun15-1gb-ext4
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  iscsi:
+    targetPortal: 192.168.1.5:3260
+    iqn: iqn.2000-01.com.synology:kong.kubernetes.142e381f03
+    lun: 15
+    fsType: ext4
+

@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: plot-96468992
+spec:
+  template:
+    metadata:
+      name: plot-96468992
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: plotter 
+          image: bugroger/omdcct:v201707081812
+          command: 
+            - /bin/sh
+            - -c 
+          args:
+            - plotavx2 -k 10482856926242515544 -x 0 -d /plots/0 -s 96468992 -n 4194304 -m 16384 -t 8 -a
+          volumeMounts:
+            - name: burst-plots-0
+              mountPath: /plots/0
+              subPath: burst/plots
+            - name: burst-plots-1
+              mountPath: /plots/1
+      volumes:
+        - name: burst-plots-0
+          persistentVolumeClaim:
+            claimName: shared-media
+        - name: burst-plots-1
+          persistentVolumeClaim:
+            claimName: burst-plots-1

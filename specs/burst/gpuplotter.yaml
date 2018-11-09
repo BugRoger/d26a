@@ -1,0 +1,70 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: gpuplotter 
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gpuplotter
+    spec:
+      containers:
+        - name: gpuplotter
+          securityContext:
+            privileged: true
+          image: bugroger/gpu-plot-generator:v4.1.3
+          command:
+            - tail
+            - -f 
+            - /dev/null
+          volumeMounts:
+            - name: plots-kong0
+              mountPath: /plots/kong0
+              subPath: burst/plots
+            - name: plots-wupse0
+              mountPath: /plots/wupse0
+            - name: plots-wupse1
+              mountPath: /plots/wupse1
+            - name: plots-wupse2
+              mountPath: /plots/wupse2
+            - name: plots-wupse3
+              mountPath: /plots/wupse3
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+            - name: gpuplotter
+              mountPath: /usr/local/bin/devices.txt
+              subPath: devices.txt
+      volumes:
+        - name: plots-kong0
+          persistentVolumeClaim:
+            claimName: shared-media
+        - name: plots-wupse0
+          hostPath:
+            path: /plots/wupse0
+        - name: plots-wupse1
+          hostPath:
+            path: /plots/wupse1
+        - name: plots-wupse2
+          hostPath:
+            path: /plots/wupse2
+        - name: plots-wupse3
+          hostPath:
+            path: /plots/wupse3
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current
+        - name: gpuplotter
+          configMap:
+            name: gpuplotter
+            items:
+              - key: devices.txt
+                path: devices.txt

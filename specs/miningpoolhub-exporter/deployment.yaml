@@ -1,0 +1,19 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: miningpoolhub-exporter
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: miningpoolhub-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: bugroger/miningpoolhub-exporter:428f580
+          ports:
+            - containerPort: 9401

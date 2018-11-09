@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: cadvisor
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cadvisor
+    spec:
+      containers:
+        - name: cadvisor
+          securityContext:
+            privileged: true
+          image: bugroger/cadvisor:201801281143
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+            - name: dev
+              mountPath: /dev
+      volumes:
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current
+        - name: dev
+          hostPath:
+            path: /dev

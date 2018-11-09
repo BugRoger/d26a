@@ -1,0 +1,9 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: acme 
+
+spec:
+  rules:
+  - host: acme.d26a.de

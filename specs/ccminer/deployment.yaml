@@ -1,0 +1,41 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: ccminer
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ccminer 
+    spec:
+      containers:
+        - name: miner
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              alpha.kubernetes.io/nvidia-gpu: 6
+          image: bugroger/ccminer:v2.2-mod-r2
+          args:
+            - --algo=Lyra2REv2
+            - --url=stratum+tcp://coinotron.com:3340
+            - --userpass=bugroger.wupse:wupse
+          ports:
+            - containerPort: 4068
+          volumeMounts:
+            - mountPath: /usr/local/nvidia
+              name: nvidia 
+            - mountPath: /usr/local/cuda
+              name: cuda 
+        
+      volumes:
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current

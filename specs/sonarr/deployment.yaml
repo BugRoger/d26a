@@ -11,8 +11,8 @@ spec:
         app: sonarr
     spec:
       containers:
-        - name: sabnzb
-          image: bugroger/sonarr:20170701
+        - name: sonarr
+          image: linuxserver/sonarr:161
           env:
             - name: TZ
               value: Europe/Berlin

@@ -13,7 +13,7 @@ spec:
       hostNetwork: true
       containers:
         - name: plex
-          image: plexinc/pms-docker:1.7.5.4035-313f93718
+          image: plexinc/pms-docker:1.13.8.5395-10d48da0d
           env:
             - name: TZ
               value: Europe/Berlin

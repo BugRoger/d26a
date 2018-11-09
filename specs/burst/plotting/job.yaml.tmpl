@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: plot 
+spec:
+  template:
+    metadata:
+      name: plot
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: plotter 
+          image: bugroger/omdcct:v201707081812
+          command: 
+            - /bin/sh
+            - -c
+          args:
+            - PLOT_COMMAND
+          volumeMounts:
+            - name: data
+              mountPath: /plots
+              subPath: burst/plots
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: shared-media
+

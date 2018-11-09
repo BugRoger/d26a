@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpuplotter
+data:
+  devices.txt: |
+    0 5 4096 16 4096

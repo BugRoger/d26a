@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: burst 
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: "kube-system/client-ca-ingress"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "3"
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+
+spec:
+  tls:
+     - secretName: burst-tls
+       hosts:
+         - burst.d26a.de
+
+  rules:
+  - host: burst.d26a.de
+    http:
+      paths:
+      - backend:
+          serviceName: burst
+          servicePort: 8125

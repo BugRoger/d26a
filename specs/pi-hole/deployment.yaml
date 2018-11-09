@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  labels:
+    app: pihole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+      - name: pihole
+        image: pihole/pihole:v4.0_amd64
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        - containerPort: 53
+          protocol: tcp
+        - containerPort: 53
+          protocol: udp
+        env:
+        - name: ServerIP
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.hostIP
+        - name: TZ
+          value: DE
+        - name: VIRTUAL_HOST
+          value: pihole.d26a.de
+        - name: WEBPASSWORD
+          value: abc123 
+
+          

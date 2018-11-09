@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: miningpoolhub-exporter 
+  annotations:
+    kubernetes.io/tls-acme: "true"
+
+spec:
+  tls:
+     - secretName: miningpoolhub-exporter
+       hosts:
+         - miningpoolhub-exporter.d26a.de
+  rules:
+  - host: miningpoolhub-exporter.d26a.de
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: miningpoolhub-exporter 
+            servicePort: 9401

@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: chromecast
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: chromecast
+    spec:
+      securityContext:
+        fsGroup: 1000
+      hostNetwork: true
+      containers:
+        - name: chromecast
+
+          image: bugroger/chrome:1.0.8
+          ports:
+            - containerPort: 5900
+            - containerPort: 9222
+          volumeMounts:
+            - name: chrome
+              mountPath: /home/chrome
+      volumes:
+        - name: chrome
+          persistentVolumeClaim:
+            claimName: chrome

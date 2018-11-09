@@ -19,12 +19,12 @@ spec:
           resources:
             limits:
               alpha.kubernetes.io/nvidia-gpu: 6
-          image: bugroger/claymore-dual-miner:9.6 
+          image: bugroger/claymore-dual-miner:10.0
           args:
             - -epool 
             - stratum+tcp://daggerhashimoto.eu.nicehash.com:3353 
             - -ewal
-            - 1Hiwrdekk4DpKkp2rJ5GApb1ukdE7fJmuF 
+            - 3BeJnixzKegDCxjGf8BJgw9UWWazoTATxH 
             - -eworker 
             - wupse 
             - -epsw 
@@ -33,21 +33,30 @@ spec:
             - "3"
             - -estale 
             - "0"
+            - -dcoin 
+            - dcr 
             - -dpool 
-            - stratum+tcp://decred.eu.nicehash.com:3354 
+            - stratum+tcp://decred.eu.nicehash.com:3354
             - -dwal 
-            - 1Hiwrdekk4DpKkp2rJ5GApb1ukdE7fJmuF 
+            - 3BeJnixzKegDCxjGf8BJgw9UWWazoTATxH 
             - -wd 
             - "1"
             - -allpools 
             - "1"
             - -dcri 
             - "40"
+          ports:
+            - containerPort: 3333
           volumeMounts:
             - mountPath: /usr/local/nvidia
               name: nvidia 
             - mountPath: /usr/local/cuda
               name: cuda 
+        - name: metrics
+          image: bugroger/miner-exporter:v201707081032
+          ports:
+            - containerPort: 9278
+        
       volumes:
         - name: nvidia
           hostPath:

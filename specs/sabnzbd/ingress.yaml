@@ -3,8 +3,17 @@ kind: Ingress
 
 metadata:
   name: sabnzbd
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: "kube-system/client-ca-ingress"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "3"
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
 
 spec:
+  tls:
+     - secretName: sabnzbd-tls
+       hosts:
+         - sabnzbd.d26a.de
   rules:
   - host: sabnzbd.d26a.de
     http:

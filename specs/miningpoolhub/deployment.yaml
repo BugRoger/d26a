@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: miningpoolhub 
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: miningpoolhub
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9278"
+    spec:
+      containers:
+        - name: miner
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              nvidia.com/gpu: 3
+          image: bugroger/multiminer:v201802281732
+          command:
+            - miningpoolhub
+          env:
+            - name: USER
+              value: BugRoger42 
+            - name: WORKER
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: PASS 
+              value: x 
+          volumeMounts:
+            - mountPath: /usr/local/cuda
+              name: cuda 
+          ports:
+            - containerPort: 2222
+        - name: exporter
+          image: bugroger/miner-exporter:v201802112156
+          args: 
+            - --ccminer=localhost:4068
+            - --claymoredualminer=localhost:3333
+            - --dstm=localhost:2222
+          ports:
+            - containerPort: 9278
+        
+      volumes:
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current

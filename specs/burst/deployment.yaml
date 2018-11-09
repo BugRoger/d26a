@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: burst 
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: burst 
+    spec:
+      containers:
+        - name: wallet
+          image: bugroger/burstcoin:1.2.9
+          ports:
+            - containerPort: 8123
+            - containerPort: 8125
+          volumeMounts:
+            - name: burstdb
+              mountPath: /burstcoin/burst_db
+            - name: burstcoin-config
+              mountPath: /burstcoin/conf
+      volumes:
+        - name: burstcoin-config 
+          configMap:
+            name: burstcoin
+        - name: burstdb
+          hostPath:
+            path: /var/lib/burst_db

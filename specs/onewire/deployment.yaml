@@ -1,0 +1,53 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: onewire
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: onewire 
+    spec:
+      containers:
+        - name: owserver
+          securityContext:
+            privileged: true
+          image: bugroger/owfs:v201707162028
+          command:
+            - owserver
+          args:
+            - -c 
+            - /etc/owfs.conf
+            - --foreground 
+          volumeMounts:
+            - mountPath: /dev/bus/usb
+              name: dev-bus-usb
+          ports:
+            - containerPort: 4304
+        - name: owhttpd
+          securityContext:
+            privileged: true
+          image: bugroger/owfs:v201707162028
+          command:
+            - owhttpd
+          args:
+            - -c 
+            - /etc/owfs.conf
+            - --foreground 
+          volumeMounts:
+            - mountPath: /dev/bus/usb
+              name: dev-bus-usb
+          ports:
+            - containerPort: 2121
+        - name: metrics
+          image: bugroger/onewire-exporter:v201707162122
+          ports:
+            - containerPort: 9401 
+      volumes:
+        - name: dev-bus-usb
+          hostPath:
+            path: /dev/bus/usb

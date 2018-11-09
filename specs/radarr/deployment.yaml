@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: radarr 
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      containers:
+        - name: radarr
+          image: linuxserver/radarr:136
+          env:
+            - name: TZ
+              value: Europe/Berlin
+            - name: PUID
+              value: "0"
+            - name: PGID
+              value: "0"
+          ports:
+            - containerPort: 7878
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: radarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: shared-media

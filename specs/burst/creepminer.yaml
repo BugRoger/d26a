@@ -1,0 +1,66 @@
+apiVersion: apps/v1beta1 
+kind: Deployment
+
+metadata:
+  name: creepminer
+spec:
+  replicas: 1 
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: creepminer
+    spec:
+      containers:
+        - name: miner
+          image: bugroger/creepminer:v201803120003
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: creepminer-config
+              mountPath: /creepminer/mining.conf
+              subPath: mining.conf
+            - name: plots-kong0
+              mountPath: /plots/kong0
+              subPath: burst/plots
+            - name: plots-wupse0
+              mountPath: /plots/wupse0
+            - name: plots-wupse1
+              mountPath: /plots/wupse1
+            - name: plots-wupse2
+              mountPath: /plots/wupse2
+            - name: plots-wupse3
+              mountPath: /plots/wupse3
+            - name: nvidia 
+              mountPath: /usr/local/nvidia
+            - name: cuda 
+              mountPath: /usr/local/cuda
+      volumes:
+        - name: plots-kong0
+          persistentVolumeClaim:
+            claimName: shared-media
+        - name: plots-wupse0
+          hostPath:
+            path: /plots/wupse0
+        - name: plots-wupse1
+          hostPath:
+            path: /plots/wupse1
+        - name: plots-wupse2
+          hostPath:
+            path: /plots/wupse2
+        - name: plots-wupse3
+          hostPath:
+            path: /plots/wupse3
+        - name: creepminer-config 
+          configMap:
+            name: creepminer
+            items:
+              - key: mining.conf
+                path: mining.conf
+        - name: nvidia
+          hostPath:
+            path: /opt/nvidia/current
+        - name: cuda
+          hostPath:
+            path: /opt/cuda/current
